@@ -1,9 +1,5 @@
 app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
-    
-    $scope.regs = new Array(32);
-    $scope.memory = new Uint8Array(1024);
-
     $scope.error = '';
     $scope.memDisplaySize = 255;
     $scope.continue = "Run"
@@ -18,9 +14,17 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
       return $scope.showAllRegs ? $scope.regs:$scope.regs.slice(0,16);
     }
 
+    $scope.step = functino(){
+      simulator.stage_1();
+      simulator.stage_2();
+      simulator.stage_3();
+      simulator.stage_4();
+      simulator.stage_5();
+    }
+
     // Testing Tokens
-    var inst = "add r6,r4,600";
-    var tokens = assembler.tokenize(inst);
-    console.log(tokens);
+    var inst = "j50";
+    var binary = assembler.assemble(inst);
+    console.log(binary);
 }]);
 
