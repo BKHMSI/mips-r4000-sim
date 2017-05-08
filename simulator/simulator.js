@@ -1,16 +1,15 @@
 var simulator = {
 
-    pc,
+    pc : 0,
     i_cache:  new Uint32Array(256),
     reg_file: new Uint32Array(32),
-    buffer_1: new buffer(),
-    buffer_2: new buffer(),
-    buffer_3: new buffer(),
-    buffer_4: new buffer(),
-    buffer_5: new buffer(),
-    buffer_6: new buffer(),
-    buffer_7: new buffer(),
-
+    if_is_buffer: new buffer(),
+    is_rf_buffer: new buffer(),
+    rf_ex_buffer: new buffer(),
+    ex_df_buffer: new buffer(),
+    df_ds_buffer: new buffer(),
+    ds_tc_buffer: new buffer(),
+    tc_wb_buffer: new buffer(),
     set_instr: function(instr){
         for(var i = 0; i<instr.length; i++)
             this.i_cache[i] = instr[i]
@@ -18,68 +17,100 @@ var simulator = {
 
 
     wb: function(){
-        if(buffer_7.regwrite_en_ctrl)
-            reg_file[buffer_7.reg_dst] = (buffer_7.memtoreg_ctrl) ? buffer_7.data_from_mem : buffer_7.alu_out;
-        copy_buffer(buffer_7, buffer_6)
+        if(this.tc_wb_buffer.regwrite_en_ctrl){
+        	var reg_dst = (this.tc_wb_buffer.reg_dst_ctrl) ? this.tc_wb_buffer.addrR_dst : this.tc_wb_buffer.addrI_dst;
+            this.reg_file[reg_dst] = (this.tc_wb_buffer.memtoreg_ctrl) ? this.tc_wb_buffer.data_from_mem : this.tc_wb_buffer.alu_out;
+            console.log(this.reg_file);
+        }
+
     },
 
     tc: function(){
-        copy_buffer(buffer_6, buffer_5)
+    	copy_buffer(this.tc_wb_buffer, this.ds_tc_buffer);
+
     },
 
     ds: function(){
-         if(buffer_5.mem_write_en_ctrl)
-            store_word(buffer_5.alu_out, buffer_5.reg_rd_2);
-        buffer_6.data_from_mem = load_word(buffer_5.alu_out); 
-        copy_buffer(buffer_5, buffer_4);
+    	copy_buffer(this.ds_tc_buffer, this.df_ds_buffer);
+    	if(this.df_ds_buffer.mem_write_en_ctrl)
+            memory.store_word(this.df_ds_buffer.alu_out, this.df_ds_buffer.reg_rd_2);
+        this.ds_tc_buffer.data_from_mem = memory.load_word(this.df_ds_buffer.alu_out);
+
     },
 
     df: function(){
-        
-        copy_buffer(buffer_4, buffer_3);
+    	copy_buffer(this.df_ds_buffer, this.ex_df_buffer);
+
     },
 
-    ex: function(alu_fn_ctrl, alu_in_ctrl, reg_rd_1, reg_rd_2, sign_imm, reg_dst_ctrl){
-        var alu_in_2, alu_out, z_flag;
-        if(!alu_in_ctrl)
-            alu_in_2 = buffer2.reg_rd_2;
-        else
-            alu_in_2 = buffer2.sign_imm;
-        switch(alu_fn_ctrl){
-            case 0: alu_out = buffer2.reg_rd_1 + alu_in_2; break;
-            case 1: alu_out = buffer2.reg_rd_1 - alu_in_2; break;
-            case 2: alu_out = buffer2.reg_rd_1 & alu_in_2; break;
-            case 3: alu_out = buffer2.reg_rd_1 | alu_in_2; break;
-            case 4: alu_out = buffer2.reg_rd_1 ^ alu_in_2; break;
-            case 5: alu_out = buffer2.reg_rd_1 >> alu_in_2; break;
-            case 6: alu_out = buffer2.reg_rd_1 << alu_in_2; break;
-            case 7: alu_out = buffer2.reg_rd_1 >>> alu_in_2; break;
-            case 8: alu_out = (buffer2.reg_rd_1 < alu_in_2) ? 1 : 0; break;
+    ex: function(){
+    	copy_buffer(this.ex_df_buffer, this.rf_ex_buffer);
+    	var sign_imm = this.rf_ex_buffer.sign_imm;
+    	var alu_fn_ctrl = this.rf_ex_buffer.alu_fn_ctrl;
+    	var alusrc_ctrl = this.rf_ex_buffer.alusrc_ctrl;
+    	var alu_input_1 = this.rf_ex_buffer.reg_rd_1;
+    	var alu_input_2 = (alusrc_ctrl) ? sign_imm : this.rf_ex_buffer.reg_rd_2;
+    	
+    	var alu_out;
+        switch(this.rf_ex_buffer.alu_func_ctrl){
+            case 0: alu_out = alu_input_1 + alu_input_2; break;
+            case 1: alu_out = alu_input_1 - alu_input_2; break;
+            case 2: alu_out = alu_input_1 & alu_input_2; break;
+            case 3: alu_out = alu_input_1 | alu_input_2; break;
+            case 4: alu_out = alu_input_1 ^ alu_input_2; break;
+            case 5: alu_out = alu_input_1 >> alu_input_2; break;
+            case 6: alu_out = alu_input_1 << alu_input_2; break;
+            case 7: alu_out = alu_input_1 >>> alu_input_2; break;
+            case 8: alu_out = (alu_input_1 < alu_input_2) ? 1 : 0; break;
         }
-        if(alu_out == 0)
-            z_flag = 1;
-        else
-            z_flag = 0;
-        buffer_4.reg_dst = (reg_dst_ctrl) ? buffer_3.addrI_dst : buffer_3.addrR_dst;
-        buffer_4.pcbranch = buffer_3.pcplus4 + buffer_3.sign_imm * 4;
-        copy_buffer(buffer_3, buffer_2);
+        var z_flag = alu_out == 0;
+        console.log("alu_input_1 = " + alu_input_1 + ", alu_input_2 = " + alu_input_2);
+        this.ex_df_buffer.reg_dst = (this.rf_ex_buffer.reg_dst_ctrl) ? this.rf_ex_buffer.addrI_dst : this.rf_ex_buffer.addrR_dst;
+        this.ex_df_buffer.pcbranch = this.rf_ex_buffer.pcplus4 + this.rf_ex_buffer.sign_imm * 4;
+        this.ex_df_buffer.alu_out = alu_out;
     },
     rf: function(){
-        var ra1,ra2;
-        ra1 = (buffer2.instr<<8)>>27;
-        ra2 = (buffer2.instr<<13)>>27;
-        buffer_3.reg_rd_1 = reg_file[ra1];
-        buffer_3.reg_rd_2 = reg_file[ra2];
-        buffer_3.addrI_dst = ra2;
-        buffer_3.addrR_dst = (buffer2.instr<<18)>>27;
-        buffer_3.sign_imm = (buffer_2.instr<<16)>>>16;
-        copy_buffer(buffer_2, buffer_1);
+    	copy_buffer(this.rf_ex_buffer, this.is_rf_buffer);
+    	var rf_instr = this.is_rf_buffer.instr;
+    	var opcode = rf_instr >> 26;
+    	var sign_imm = (rf_instr << 16) >>> 16;
+    	var rs = (rf_instr >> 21) & 0x1F;
+    	var rt = (rf_instr >> 16) & 0x1F;
+    	var rd = (rf_instr >> 11) & 0x1F;
+    	var funct = rf_instr & 0x3F;
+
+    	var control_signals = control_unit.get_signals(opcode, funct);
+    	var ra1 = this.reg_file[rs];
+    	var ra2 = this.reg_file[rt];
+
+    	if(rf_instr == undefined){
+    		opcode = sign_imm = rs = rt = rd = funct = control_signals = ra1 = ra2 = undefined;
+    	}
+
+        for (var control_signal in control_signals){
+        	var signal_value = control_signals[control_signal];
+        	this.rf_ex_buffer[control_signal] = signal_value;
+        }
+        this.rf_ex_buffer.sign_imm = sign_imm;
+        this.rf_ex_buffer.reg_rd_1 = ra1;
+        this.rf_ex_buffer.reg_rd_2 = ra2;
+        this.rf_ex_buffer.addrI_dst = rt;
+        this.rf_ex_buffer.addrR_dst = rd;
     },
     is: function(){
-       buffer_2.instr = i_cache[this.pc>>2]
+    	copy_buffer(this.is_rf_buffer, this.if_is_buffer);
+    	var is_pc = this.if_is_buffer.pc;
+    	var is_instr = this.i_cache[is_pc / 4];
+    	this.is_rf_buffer.pc_plus4 = (is_pc == undefined) ? undefined : is_pc + 4;
+    	this.is_rf_buffer.instr = (is_instr == undefined) ? undefined : is_instr;
     },  
     
     if: function(){
-        buffer_1.pcplus4 = pc + 4;
+    	//Branch logic selects an instruction address and the instruction cache fetch begins
+    	this.if_is_buffer.pc = this.pc;
+    	
+    	var if_pc_plus4 = this.pc + 4;
+    	//TODO: Branch / Jump logic
+    	this.pc = if_pc_plus4;
     }
 }

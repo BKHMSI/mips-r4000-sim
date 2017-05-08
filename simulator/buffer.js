@@ -1,6 +1,6 @@
 function buffer() {
     this.instr;
-    this.pcplus4;
+    this.pc_plus4;
     this.reg_rd_1;
     this.reg_rd_2;
     this.sign_imm;
@@ -21,11 +21,13 @@ function buffer() {
     this.pc_src_ctrl;
     this.alu_func_ctrl;
     this.reg_dst_ctrl;
+    this.branch_ctrl;
+    this.bne_ctrl;
 }
 function copy_buffer(x, y)
 {
     x.instr = y.instr;
-    x.pcplus4 = y.pcplus4;
+    x.pc_plus4 = y.pc_plus4;
     x.reg_rd_1 = y.reg_rd_1;
     x.reg_rd_2 = y.reg_rd_2;
     x.sign_imm = y.sign_imm;
@@ -46,4 +48,6 @@ function copy_buffer(x, y)
     x.pc_src_ctrl = y.pc_src_ctrl;
     x.alu_func_ctrl = y.alu_func_ctrl;
     x.reg_dst_ctrl = y.reg_dst_ctrl;
+    x.branch_ctrl = y.branch_ctrl;
+    x.bne_ctrl = y.bne_ctrl;
 }
