@@ -12,7 +12,7 @@ var simulator = {
     tc_wb_buffer: new buffer(),
     set_instr: function(instr){
         for(var i = 0; i<instr.length; i++)
-            this.i_cache[i] = instr[i]
+            this.i_cache[i] = instr[i];
     },
 
 
