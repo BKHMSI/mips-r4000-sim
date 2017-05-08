@@ -1,18 +1,31 @@
 app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
     $scope.error = '';
-    $scope.memDisplaySize = 255;
+    $scope.mem_disp_size = 255;
     $scope.continue = "Run"
-    $scope.showAllRegs = false;
+    $scope.show_all_regs = false;
+	$scope.regs = simulator.reg_file;
 
     // Init Editor
     var editor = ace.edit("assemblyCode");
     editor.setValue("");
 
+	var instr = [];
+
     // Helper Functions
     $scope.getRegs = function(){
-      //return $scope.showAllRegs ? $scope.regs:$scope.regs.slice(0,16);
-    }
+      return $scope.show_all_regs ? $scope.regs:$scope.regs.slice(0,16);
+    };
+
+	$scope.assemble = function(){
+		var code = editor.getValue().split('\n');
+		console.log(code);
+		for(var i = 0; i<code.length; i++)
+			instr.push(assembler.assemble(code[i]));
+		console.log(instr);
+		simulator.set_instr(instr);
+	};
+
     var clock = 0;
     $scope.step = function(){
     	console.log("Clock " + clock.toString() + " begin.");
@@ -48,12 +61,12 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
     	console.log("Clock " + clock.toString() + " end.\n\n");
     	clock ++;
-    }
+    };
 
     // Testing Tokens
-    var inst = "addi $1, $0, 5";
-    var binary = assembler.assemble(inst);
-    simulator.set_instr([binary, assembler.assemble("add $2, $0, $1")]);
-    console.log(binary.toString(2));
+    // var inst = "addi $1, $0, 5";
+    // var binary = assembler.assemble(inst);
+    // simulator.set_instr([binary, assembler.assemble("add $2, $0, $1")]);
+    // console.log(binary.toString(2));
 }]);
 
