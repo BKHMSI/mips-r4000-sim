@@ -38,6 +38,8 @@
     <script type="text/javascript" charset="utf8" src="simulator/memory.js"></script>
     <script type="text/javascript" charset="utf8" src="simulator/control_unit.js"></script>
     <script type="text/javascript" charset="utf8" src="simulator/branch_predictor.js"></script>
+    <script type="text/javascript" charset="utf8" src="simulator/hazard_unit.js"></script>
+
 </head>
 
 <body ng-controller="CPUController">
@@ -69,11 +71,9 @@
         </ul>
         
         <div ng-view style="height:100%"></div>
-
         <hr style="margin-top:10px;margin-bottom:10px;"/>
         <p><small> &copy; Badr AlKhamissi, Youssef Nassar, Mohamed El-Iskandarani</small></p>
     </div>
-
 </body>
 
 </html>

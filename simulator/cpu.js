@@ -17,7 +17,6 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.ds_tc_buffer = simulator.ds_tc_buffer;
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
 
-
 	var instr = [];
 	var editor;
 	var code = [];
@@ -67,6 +66,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
     $scope.step = function(){
     	console.log("Clock " + $scope.clock.toString() + " begin.");
+    	simulator.hazard_signals = hazard_unit.get_signals();
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
@@ -75,6 +75,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     	simulator.rf();
     	simulator.is();
     	simulator.if();
+    	if(simulator.hazard_signals)
+    		simulator.hazard_signals--;
 
     	console.log("if_is:");
     	console.log(simulator.if_is_buffer);
