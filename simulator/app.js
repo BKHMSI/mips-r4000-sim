@@ -1,4 +1,29 @@
-var app = angular.module("MIPS",['BinFilter','HexFilter','MemFilter']);
+var app = angular.module("MIPS",['BinFilter','HexFilter','MemFilter', "ngRoute"]);
+
+app.config(function($routeProvider) {
+    $routeProvider
+        // route for auc home page
+
+        .when('/', {
+              templateUrl : 'views/editor.html',
+              controller  : 'CPUController'
+         })
+
+        .when('/editor', {
+              templateUrl : 'views/editor.html',
+              controller  : 'CPUController'
+        })
+
+        .when('/memory', {
+            templateUrl : 'views/memory.html',
+            controller  : 'CPUController'
+        })
+
+        .when('/cpu', {
+            templateUrl : 'views/buffers.html',
+            controller  : 'CPUController'
+        })
+});
 
 angular.module('BinFilter', []).filter('BinFilter', function() {
   return function(input) {

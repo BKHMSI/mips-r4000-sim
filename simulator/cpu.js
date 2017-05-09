@@ -5,30 +5,68 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.continue = "Run"
     $scope.show_all_regs = false;
 	$scope.regs = simulator.reg_file;
+	$scope.clock = 0;
+	$scope.memory = memory;
+	
+	// Buffers
+	$scope.if_is_buffer = simulator.if_is_buffer;
+	$scope.is_rf_buffer = simulator.is_rf_buffer;
+    $scope.rf_ex_buffer = simulator.rf_ex_buffer;
+    $scope.ex_df_buffer = simulator.ex_df_buffer;
+    $scope.df_ds_buffer = simulator.df_ds_buffer;
+    $scope.ds_tc_buffer = simulator.ds_tc_buffer;
+    $scope.tc_wb_buffer = simulator.tc_wb_buffer;
 
-    // Init Editor
-    var editor = ace.edit("assemblyCode");
-    editor.setValue("");
 
 	var instr = [];
+	var editor;
+	var code = [];
+
+	$scope.$on('$routeChangeSuccess', function() {
+		// Init Editor
+		editor = ace.edit("assemblyCode");
+		project = "";
+		for(var i = 0; i<code.length; i++) 
+			project += code[i]+"\n";
+        editor.setValue(project);
+    });
+
+	$scope.goTo = function(tab){
+		$("#editor_tab, #mem_tab, #cpu_tab").removeClass("active");
+		switch(tab){
+			case 0: 
+				$("#editor_tab").addClass("active");
+				window.location.href = "#editor";
+				break;
+			case 1:
+				$("#mem_tab").addClass("active");
+				window.location.href = "#memory";
+				break;
+			case 2:
+				$("#cpu_tab").addClass("active");
+				window.location.href = "#cpu";
+				break;
+		}
+	};
 
     // Helper Functions
     $scope.getRegs = function(){
       return $scope.show_all_regs ? $scope.regs:$scope.regs.slice(0,16);
     };
 
+
 	$scope.assemble = function(){
-		var code = editor.getValue().split('\n');
+		code = editor.getValue().split('\n');
+		console.log("From Assemble");
 		console.log(code);
 		for(var i = 0; i<code.length; i++)
 			instr.push(assembler.assemble(code[i]));
-		console.log(instr);
 		simulator.set_instr(instr);
+		$scope.goTo(2);
 	};
 
-    var clock = 0;
     $scope.step = function(){
-    	console.log("Clock " + clock.toString() + " begin.");
+    	console.log("Clock " + $scope.clock.toString() + " begin.");
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
@@ -59,14 +97,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 	    console.log("tc_wb:");
 	    console.log(simulator.tc_wb_buffer);
 
-    	console.log("Clock " + clock.toString() + " end.\n\n");
-    	clock ++;
+    	console.log("Clock " + $scope.clock.toString() + " end.\n\n");
+    	$scope.clock ++;
     };
-
-    // Testing Tokens
-    // var inst = "addi $1, $0, 5";
-    // var binary = assembler.assemble(inst);
-    // simulator.set_instr([binary, assembler.assemble("add $2, $0, $1")]);
-    // console.log(binary.toString(2));
 }]);
 

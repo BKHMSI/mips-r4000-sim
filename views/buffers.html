@@ -1,0 +1,266 @@
+<div class="row">
+    <div class="col-lg-8 col-md-6">
+
+        <div id="buffers" style="overflow:scroll; height: 600px;">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">IF/IS Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">PC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{if_is_buffer.pc_plus4}}</small></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">IS/RF Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">PC+4</th>
+                                <th style="text-align:center">Instr</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{is_rf_buffer.pc_plus4}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{is_rf_buffer.instr | HexFilter}}</small></div></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">RF/EX Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">PC+4</th>
+                                <th style="text-align:center">Rd1</th>
+                                <th style="text-align:center">Rd2</th>
+                                <th style="text-align:center">Rs/Rt/Rd</th>
+                                <th style="text-align:center">SImm</th>
+                                <th style="text-align:center">PC</th>
+                                <th style="text-align:center">ALU</th>
+                                <th style="text-align:center">ALUFunc</th>
+                                <th style="text-align:center">RegW</th>
+                                <th style="text-align:center">RegDC</th>
+                                <th style="text-align:center">B</th>
+                                <th style="text-align:center">BNE</th>
+                                <th style="text-align:center">J</th>
+                                <th style="text-align:center">Mem2Reg</th>
+                                <th style="text-align:center">MemW</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.pc_plus4}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.reg_rd_1}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.reg_rd_2}}</small></div></td>
+                                <!--//not added<td><div style="margin:auto;"><small>{{rf_ex.buffer.}}</small></div></td>-->
+                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.sign_imm}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.pc_src_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.alusrc_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.alu_func_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.reg_dst_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.write_reg_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.branch_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.bne_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.jump_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.memtoreg_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.mem_write_en_ctrl}}</small></div></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">EX/DF Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">PC+4</th>
+                                <th style="text-align:center">ALUOut</th>
+                                <th style="text-align:center">WriteData</th>
+                                <th style="text-align:center">RegDst</th>
+                                <th style="text-align:center">RegW</th>
+                                <th style="text-align:center">B</th>
+                                <th style="text-align:center">BNE</th>
+                                <th style="text-align:center">J</th>
+                                <th style="text-align:center">Mem2Reg</th>
+                                <th style="text-align:center">MemWrite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.pc_plus4}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.alu_out}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.write_data}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.reg_dst}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.regwrite_en_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.branch_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.bne_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.jump_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.memtoreg_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df.buffer.mem_write_en_ctrl}}</small></div></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">DF/DS Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">PC+4</th>
+                                <th style="text-align:center">ALUOut</th>
+                                <th style="text-align:center">WriteData</th>
+                                <th style="text-align:center">RegDst</th>
+                                <th style="text-align:center">RegW</th>
+                                <th style="text-align:center">B</th>
+                                <th style="text-align:center">BNE</th>
+                                <th style="text-align:center">J</th>
+                                <th style="text-align:center">Mem2Reg</th>
+                                <th style="text-align:center">MemWrite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.pc_plus4}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.alu_out}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.write_data}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.reg_dst}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.regwrite_en_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.branch_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.bne_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.jump_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.memtoreg_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{df_ds_buffer.mem_write_en_ctrl}}</small></div></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">DS/TC Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">PC+4</th>
+                                <th style="text-align:center">ALUOut</th>
+                                <th style="text-align:center">WriteData</th>
+                                <th style="text-align:center">RegDst</th>
+                                <th style="text-align:center">RegW</th>
+                                <th style="text-align:center">B</th>
+                                <th style="text-align:center">BNE</th>
+                                <th style="text-align:center">J</th>
+                                <th style="text-align:center">Mem2Reg</th>
+                                <th style="text-align:center">MemWrite</th>
+                                <th style="text-align:center">DataMem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.pc_plus4}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.alu_out}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.write_data}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.reg_dst}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.regwrite_en_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.branch_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.bne_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.jump_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.memtoreg_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.mem_write_en_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ds_tc_buffer.data_from_mem}}</small></div></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">TC/WB Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">PC+4</th>
+                                <th style="text-align:center">ALUOut</th>
+                                <th style="text-align:center">RegDst</th>
+                                <th style="text-align:center">RegW</th>
+                                <th style="text-align:center">B</th>
+                                <th style="text-align:center">BNE</th>
+                                <th style="text-align:center">J</th>
+                                <th style="text-align:center">Mem2Reg</th>
+                                <th style="text-align:center">DataMem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.pc_plus4}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.alu_out}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.reg_dst}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.regwrite_en_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.branch_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.bne_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.jump_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.memtoreg_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{tc_wb_buffer.data_from_mem}}</small></div></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="col-lg-4 col-md-6" style="overflow:scroll; height:600px">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title" style="display:inline-block">Registers</h4>
+            </div>
+            <div class="panel-body">
+                <table style="color:black" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center">Reg #</th>
+                            <th style="text-align:center">Binary</th>
+                            <th style="text-align:center">Hexadecimal</th>
+                            <th style="text-align:center">Decimal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="text-align:center;" class="source-code" ng-repeat="reg in regs track by $index">
+                            <td>
+                                <div style="margin:auto;"><small>{{ $index }}</small></div>
+                            </td>
+                            <td>
+                                <div style="margin:auto;"><small>{{ reg | BinFilter}}</small></div>
+                            </td>
+                            <td>
+                                <div style="margin:auto;"><small>{{ reg | HexFilter}}</small></div>
+                            </td>
+                            <td>
+                                <div style="margin:auto;"><small>{{ reg }}</small></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

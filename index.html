@@ -19,6 +19,25 @@
     <script type="text/javascript" charset="utf-8" src="dependencies/ace/theme-clouds_midnight.js"></script>
     <script type="text/javascript" charset="utf-8" src="dependencies/ace/theme-github.js"></script>
     <script type="text/javascript" charset="utf-8" src="dependencies/ace/theme-pastel_on_dark.js"></script>
+    <!-- jQuery -->
+    <script type="text/javascript" charset="utf8" src="dependencies/jquery.min.js"></script>
+    <!-- AngularJS -->
+    <!--<script type="text/javascript" charset="utf8" src="js/angular.min.js"></script>-->
+    <script type="text/javascript" charset="utf8" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://code.angularjs.org/1.5.3/angular-route.js"></script>
+    <!-- Font Awesome -->
+    <script type="text/javascript" charset="utf8" src="https://use.fontawesome.com/3d0fc41592.js"></script>
+    <!-- App -->
+    <script type="text/javascript" charset="utf8" src="simulator/app.js"></script>
+    <!-- Controller -->
+    <script type="text/javascript" charset="utf8" src="simulator/cpu.js"></script>
+    <!-- Simulator -->
+    <script type="text/javascript" charset="utf8" src="simulator/assembler.js"></script>
+    <script type="text/javascript" charset="utf8" src="simulator/buffer.js"></script>
+    <script type="text/javascript" charset="utf8" src="simulator/simulator.js"></script>
+    <script type="text/javascript" charset="utf8" src="simulator/memory.js"></script>
+    <script type="text/javascript" charset="utf8" src="simulator/control_unit.js"></script>
+    <script type="text/javascript" charset="utf8" src="simulator/branch_predictor.js"></script>
 </head>
 
 <body ng-controller="CPUController">
@@ -27,7 +46,7 @@
             <div class="navbar-header">
                 <div class="btn-group">
                     <button type="button" class="btn btn-success navbar-btn" ng-click="run()"><span class="glyphicon glyphicon-play"></span> {{continue}}</button>
-                    <button type="button" class="btn btn-default navbar-btn" ng-click="step()"><span class="glyphicon glyphicon-forward"></span> Step</button>
+                    <button type="button" class="btn btn-default navbar-btn" ng-click="step()"><span class="glyphicon glyphicon-forward"></span> Cycle {{clock}}</button>
                     <button type="button" class="btn btn-default navbar-btn" ng-click="reset()"><span class="glyphicon glyphicon-refresh"></span>  Reset</button>
                 </div>
                 <button type="button" class="btn btn-default navbar-btn" ng-click="bug()"><i class="fa fa-bug" aria-hidden="true"></i> Report a Bug</button>
@@ -42,112 +61,18 @@
 
     <div class="container">
         <div class="alert alert-danger" ng-hide="error === ''">{{error}}</div>
-        <div class="row">
-            <div class="col-lg-7 col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading" style="">
-                        <h4 class="panel-title" style="display:inline-block"> MIPS Code <small>(<a href="https://ece.uwaterloo.ca/~ece222/ARM/ARM7-TDMI-manual-pt3.pdf" target="_blank" style="color: #337AB7">Instruction Set</a>)</small></h4>
-                        <select class="sel" style="float:right" id="theme" onChange="changeTheme(value);">
-                            <option value="0">Ambiance Theme</option>
-                            <option value="1">Chrome Theme</option>
-                            <option value="2">Clouds_midnight Theme</option>
-                            <option value="3">Github Theme</option>
-                            <option value="4">Twilight Theme</option>
-                            <option value="5">Pastel on Dark Theme</option>
-                            <option value="6" selected="selected">Xcode Theme</option>
-                        </select>
-                    </div>
-                    <div class="panel-body">
-                        <form role="form">
-                            <div style="height:500px;width:100%;margin-bottom:5px;font-size:16px" id="assemblyCode"></div>
-                            <pre style="display:none"><code class="ARM Assembly"></code></pre>
-                            <button type="button" class="btn btn-default" ng-click="assemble()"><i class="fa fa-gears" aria-hidden="true"></i> Assemble</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        <ul class="nav nav-tabs">
+            <li id="editor_tab" class="active"><a style="cursor:pointer" ng-click="goTo(0)">Editor</a></li>
+            <li id="mem_tab"><a style="cursor:pointer" ng-click="goTo(1)">Memory</a></li>
+            <li id="cpu_tab"><a style="cursor:pointer" ng-click="goTo(2)">CPU Buffers</a></li>
+            <li><a href="#">ISA</a></li>
+        </ul>
+        
+        <div ng-view style="height:100%"></div>
 
-            <div class="col-lg-5 col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title" style="display:inline-block">Registers</h4>
-                        <small style="color:black">&nbsp;&nbsp;Show All Registers</small>
-                        <input type="checkbox" ng-model="show_all_regs" />
-                    </div>
-                    <div class="panel-body">
-                        <table style="color:black" class="table table-condensed table-striped">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:center">Reg #</th>
-                                    <th style="text-align:center">Binary</th>
-                                    <th style="text-align:center">Hexadecimal</th>
-                                    <th style="text-align:center">Decimal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="text-align:center;" class="source-code" ng-repeat="reg in getRegs() track by $index">
-                                    <td>
-                                        <div style="margin:auto;"><small>{{ $index }}</small></div>
-                                    </td>
-                                    <td>
-                                        <div style="margin:auto;"><small>{{ reg | BinFilter}}</small></div>
-                                    </td>
-                                    <td>
-                                        <div style="margin:auto;"><small>{{ reg | HexFilter}}</small></div>
-                                    </td>
-                                    <td>
-                                        <div style="margin:auto;"><small>{{ reg }}</small></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 style="display:inline-block; padding-right:10px" class="panel-title">Memory</h4>
-                <p style="display:inline-block;">Size(bytes): </p>
-                <input style="display:inline-block; height:20px; width:100px" class="txtbox" step="1" ng-model="mem_disp_size" type="text"
-                    placeholder="Display" />
-            </div>
-            <div class="panel-body source-code">
-                <div class="source-code">
-                    <div class="memory-block" ng-repeat="m in memory.slice(0,memDisplaySize) track by $index">
-                        <div>
-                            <small>{{ m | MemFilter}}</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-          <hr style="margin-top:10px;margin-bottom:10px;"/>
-          <p><small> &copy; Badr AlKhamissi, Youssef Nassar, Mohamed Shahawy, Mohamed El-Iskandarani</small></p>
+        <hr style="margin-top:10px;margin-bottom:10px;"/>
+        <p><small> &copy; Badr AlKhamissi, Youssef Nassar, Mohamed El-Iskandarani</small></p>
     </div>
-
-
-
-    <!-- jQuery -->
-    <script type="text/javascript" charset="utf8" src="dependencies/jquery.min.js"></script>
-    <!-- AngularJS -->
-    <!--<script type="text/javascript" charset="utf8" src="js/angular.min.js"></script>-->
-    <script type="text/javascript" charset="utf8" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-    <!-- Font Awesome -->
-    <script type="text/javascript" charset="utf8" src="https://use.fontawesome.com/3d0fc41592.js"></script>
-    <!-- App -->
-    <script type="text/javascript" charset="utf8" src="simulator/app.js"></script>
-    <!-- Controller -->
-    <script type="text/javascript" charset="utf8" src="simulator/cpu.js"></script>
-    <!-- Simulator -->
-    <script type="text/javascript" charset="utf8" src="simulator/assembler.js"></script>
-    <script type="text/javascript" charset="utf8" src="simulator/buffer.js"></script>
-    <script type="text/javascript" charset="utf8" src="simulator/simulator.js"></script>
-    <script type="text/javascript" charset="utf8" src="simulator/memory.js"></script>
-    <script type="text/javascript" charset="utf8" src="simulator/control_unit.js"></script>
-    <script type="text/javascript" charset="utf8" src="simulator/branch_predictor.js"></script>
-
 
 </body>
 

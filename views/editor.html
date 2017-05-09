@@ -1,0 +1,63 @@
+<div class="row">
+    <div class="col-lg-7 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title" style="display:inline-block"> MIPS Code <small>(<a href="http://www-inst.eecs.berkeley.edu/~cs61c/resources/MIPS_Green_Sheet.pdf" target="_blank" style="color: #337AB7">Green Sheet</a>)</small></h4>
+                <select class="sel" style="float:right" id="theme" onChange="changeTheme(value);">
+                            <option value="0">Ambiance Theme</option>
+                            <option value="1">Chrome Theme</option>
+                            <option value="2">Clouds_midnight Theme</option>
+                            <option value="3">Github Theme</option>
+                            <option value="4">Twilight Theme</option>
+                            <option value="5">Pastel on Dark Theme</option>
+                            <option value="6" selected="selected">Xcode Theme</option>
+                        </select>
+            </div>
+            <div class="panel-body">
+                <form role="form">
+                    <div style="height:500px; width:100%;margin-bottom:5px;font-size:16px" id="assemblyCode"></div>
+                    <pre style="display:none"><code class="ARM Assembly"></code></pre>
+                    <button type="button" class="btn btn-default" ng-click="assemble()"><i class="fa fa-gears" aria-hidden="true"></i> Assemble</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title" style="display:inline-block">Registers</h4>
+                <small style="color:black">&nbsp;&nbsp;Show All Registers</small>
+                <input type="checkbox" ng-model="show_all_regs" />
+            </div>
+            <div class="panel-body">
+                <table style="color:black" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center">Reg #</th>
+                            <th style="text-align:center">Binary</th>
+                            <th style="text-align:center">Hexadecimal</th>
+                            <th style="text-align:center">Decimal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="text-align:center;" class="source-code" ng-repeat="reg in getRegs() track by $index">
+                            <td>
+                                <div style="margin:auto;"><small>{{ $index }}</small></div>
+                            </td>
+                            <td>
+                                <div style="margin:auto;"><small>{{ reg | BinFilter}}</small></div>
+                            </td>
+                            <td>
+                                <div style="margin:auto;"><small>{{ reg | HexFilter}}</small></div>
+                            </td>
+                            <td>
+                                <div style="margin:auto;"><small>{{ reg }}</small></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
