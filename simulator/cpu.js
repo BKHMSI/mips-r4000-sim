@@ -7,7 +7,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 	$scope.regs = simulator.reg_file;
 	$scope.clock = 0;
 	$scope.memory = memory;
-	
+
 	// Buffers
 	$scope.if_is_buffer = simulator.if_is_buffer;
 	$scope.is_rf_buffer = simulator.is_rf_buffer;
@@ -16,6 +16,10 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.df_ds_buffer = simulator.df_ds_buffer;
     $scope.ds_tc_buffer = simulator.ds_tc_buffer;
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
+	$scope.hazard_forwarda = simulator.hazard_signals.forward_a;
+	$scope.hazard_forwardb = simulator.hazard_signals.forward_b;
+	$scope.hazard_stall = simulator.hazard_signals.stall;
+	$scope.hazard_flush = simulator.hazard_signals.flush;
 
 	var instr = [];
 	var editor;
@@ -23,11 +27,14 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
 	$scope.$on('$routeChangeSuccess', function() {
 		// Init Editor
-		editor = ace.edit("assemblyCode");
+		if(window.location.href.indexOf("editor") != -1){
+			editor = ace.edit("assemblyCode");
+			editor.setValue(project);
+		}
+
 		project = "";
 		for(var i = 0; i<code.length; i++) 
 			project += code[i]+"\n";
-        editor.setValue(project);
     });
 
 	$scope.goTo = function(tab){
@@ -66,7 +73,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
     $scope.step = function(){
     	console.log("Clock " + $scope.clock.toString() + " begin.");
-    	simulator.hazard_signals = hazard_unit.get_signals();
+		simulator.hazard_signals = hazard_unit.get_signals();
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
@@ -75,8 +82,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     	simulator.rf();
     	simulator.is();
     	simulator.if();
-    	if(simulator.hazard_signals)
-    		simulator.hazard_signals--;
+    	if(simulator.hazard_signals.stall)
+    		simulator.hazard_signals.stall--;
 
     	console.log("if_is:");
     	console.log(simulator.if_is_buffer);

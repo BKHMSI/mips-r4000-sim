@@ -10,6 +10,7 @@ var simulator = {
     df_ds_buffer: new buffer(),
     ds_tc_buffer: new buffer(),
     tc_wb_buffer: new buffer(),
+	hazard_signals: {forward_a:0,forward_b:0,stall:0,flush:0},
 
     set_instr: function(instr){
         for(var i = 0; i<instr.length; i++)
@@ -23,7 +24,6 @@ var simulator = {
             this.reg_file[reg_dst] = (this.tc_wb_buffer.memtoreg_ctrl) ? this.tc_wb_buffer.data_from_mem : this.tc_wb_buffer.alu_out;
             console.log(this.reg_file);
         }
-
     },
 
     tc: function(){
@@ -119,6 +119,7 @@ var simulator = {
         	var signal_value = control_signals[control_signal];
         	this.rf_ex_buffer[control_signal] = signal_value;
         }
+		
         this.rf_ex_buffer.sign_imm = sign_imm;
         this.rf_ex_buffer.reg_rd_1 = ra1;
         this.rf_ex_buffer.reg_rd_2 = ra2;

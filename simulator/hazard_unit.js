@@ -2,8 +2,9 @@ var hazard_unit = {
 
 	get_signals : function(){
 		var signals = {};
-		// forwarding (a)
+		// forwarding(a)
 		if (simulator.rf_ex_buffer.rs == simulator.ex_df_buffer.reg_dst && simulator.ex_df_buffer.regwrite_en_ctrl){
+			alert("Forward A");
 			signals.forward_a = 4;
 		}
 		else if (simulator.rf_ex_buffer.rs == simulator.df_ds_buffer.reg_dst && simulator.df_ds_buffer.regwrite_en_ctrl){
@@ -21,6 +22,7 @@ var hazard_unit = {
 
 		// forwarding(b)
 		if (simulator.rf_ex_buffer.addrI_dst == simulator.ex_df_buffer.reg_dst && simulator.ex_df_buffer.regwrite_en_ctrl){
+			alert("Forward B");
 			signals.forward_b = 4;
 		}
 		else if (simulator.rf_ex_buffer.addrI_dst == simulator.df_ds_buffer.reg_dst && simulator.df_ds_buffer.regwrite_en_ctrl){
@@ -36,12 +38,11 @@ var hazard_unit = {
 			signals.forward_b = 0;
 		}
 
-		if(simulator.ds_tc_buffer.memtoreg_ctrl){
+		if(simulator.ds_tc_buffer.memwrite_en_ctrl){
 			if(simulator.ds_tc_buffer.reg_dst == simulator.rf_ex_buffer.rs)
 				signals.forward_ae = 1;
 			if(simulator.ds_tc_buffer.reg_dst == simulator.rf_ex_buffer.addrI_dst)
 				signals.forward_be = 1;
-			
 		}
 
 		// stalling

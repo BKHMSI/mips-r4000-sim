@@ -2,6 +2,31 @@
     <div class="col-lg-8 col-md-6">
 
         <div id="buffers" style="overflow:scroll; height: 600px;">
+
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">Hazard Signals</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">Forward A</th>
+                                <th style="text-align:center">Forward B</th>
+                                <th style="text-align:center">Stall</th>
+                                <th style="text-align:center">Flush</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code">
+                                <td><div style="margin:auto;"><small>{{hazard_forwarda}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{hazard_forwardb}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{hazard_stall}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{hazard_flush}}</small></div></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
             <div class="panel panel-default">
                 <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">IF/IS Buffer</h4></div>
                 <div class="panel-body">
@@ -64,11 +89,11 @@
                         </thead>
                         <tbody>
                             <tr style="text-align:center;" class="source-code">
-                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.pc_plus4}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.reg_rd_1}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.reg_rd_2}}</small></div></td>
-                                <!--//not added<td><div style="margin:auto;"><small>{{rf_ex.buffer.}}</small></div></td>-->
-                                <td><div style="margin:auto;"><small>{{rf_ex.buffer.sign_imm}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.pc_plus4}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.reg_rd_1}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.reg_rd_2}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.rs}}/{{rf_ex_buffer.addrI_dst}}/{{rf_ex_buffer.addrR_dst}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{rf_ex_buffer.sign_imm}}</small></div></td>
                                 <td><div style="margin:auto;"><small>{{rf_ex_buffer.pc_src_ctrl}}</small></div></td>
                                 <td><div style="margin:auto;"><small>{{rf_ex_buffer.alusrc_ctrl}}</small></div></td>
                                 <td><div style="margin:auto;"><small>{{rf_ex_buffer.alu_func_ctrl}}</small></div></td>
@@ -105,15 +130,15 @@
                         <tbody>
                             <tr style="text-align:center;" class="source-code">
                                 <td><div style="margin:auto;"><small>{{ex_df_buffer.pc_plus4}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.alu_out}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.write_data}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.reg_dst}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.regwrite_en_ctrl}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.branch_ctrl}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.bne_ctrl}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.jump_ctrl}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.memtoreg_ctrl}}</small></div></td>
-                                <td><div style="margin:auto;"><small>{{ex_df.buffer.mem_write_en_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.alu_out}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.write_data}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.reg_dst}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.regwrite_en_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.branch_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.bne_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.jump_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.memtoreg_ctrl}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{ex_df_buffer.mem_write_en_ctrl}}</small></div></td>
                         </tbody>
                     </table>
                 </div>
