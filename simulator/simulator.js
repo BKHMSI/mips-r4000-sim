@@ -10,7 +10,7 @@ var simulator = {
     df_ds_buffer: new buffer(),
     ds_tc_buffer: new buffer(),
     tc_wb_buffer: new buffer(),
-	hazard_signals: {forward_a:0,forward_b:0,stall:0,flush:0},
+	hazard_signals: {forward_a:0,forward_b:0,forward_c:0,stall:0,flush:0},
 
     set_instr: function(instr){
         for(var i = 0; i<instr.length; i++)
@@ -35,16 +35,22 @@ var simulator = {
     ds: function(){
     	if(!this.hazard_signals.stall)
     		copy_buffer(this.ds_tc_buffer, this.df_ds_buffer);
-    	if(this.df_ds_buffer.mem_write_en_ctrl)
-            memory.store_word(this.df_ds_buffer.write_data, this.df_ds_buffer.reg_rd_2);
+    	if(this.df_ds_buffer.mem_write_en_ctrl){
+			console.log(this.df_ds_buffer.write_data);
+            memory.store_word(this.df_ds_buffer.alu_out, this.df_ds_buffer.write_data);
+		}
         this.ds_tc_buffer.data_from_mem = memory.load_word(this.df_ds_buffer.alu_out);
 
+		switch(this.hazard_signals.forward_c){
+			case 2: this.ds_tc_buffer.write_data = this.tc_wb_buffer.data_from_mem; break;
+			case 1: this.ds_tc_buffer.write_data = this.reg_file[this.ds_tc_buffer.reg_dst]; break;
+			default: break;
+		}
     },
 
     df: function(){
     	if(!this.hazard_signals.stall)
     		copy_buffer(this.df_ds_buffer, this.ex_df_buffer);
-
     },
 
     ex: function(){
@@ -59,7 +65,8 @@ var simulator = {
     	var alusrc_ctrl = this.rf_ex_buffer.alusrc_ctrl;
     	var alu_input_1;
     	var alu_input_2;
-    	
+    	var alu_input_tmp; 
+
     	switch(this.hazard_signals.forward_a){
     		case 4: alu_input_1 = this.df_ds_buffer.alu_out; break;
     		case 3: alu_input_1 = this.ds_tc_buffer.alu_out; break;
@@ -69,15 +76,16 @@ var simulator = {
     	}
 
     	switch(this.hazard_signals.forward_b){
-			case 4: alu_input_2 = this.df_ds_buffer.alu_out; break;
-    		case 3: alu_input_2 = this.ds_tc_buffer.alu_out; break;
-    		case 2: alu_input_2 = this.tc_wb_buffer.alu_out; break;
-    		case 1: alu_input_2 = this.ds_tc_buffer.data_from_mem; break;
-    		case 0: alu_input_2 = this.rf_ex_buffer.reg_rd_2; break;
+			case 4: alu_input_tmp = this.df_ds_buffer.alu_out; break;
+    		case 3: alu_input_tmp = this.ds_tc_buffer.alu_out; break;
+    		case 2: alu_input_tmp = this.tc_wb_buffer.alu_out; break;
+    		case 1: alu_input_tmp = this.ds_tc_buffer.data_from_mem; break;
+    		case 0: alu_input_tmp = this.rf_ex_buffer.reg_rd_2; break;
     	}
 
-    	this.ex_df_buffer.write_data = alu_input_2;
-    	alu_input_2 = (alusrc_ctrl) ? sign_imm : this.rf_ex_buffer.reg_rd_2
+		alu_input_2 = (alusrc_ctrl) ? sign_imm : alu_input_tmp;
+
+    	this.ex_df_buffer.write_data = alu_input_tmp;
     	var alu_out;
         switch(this.rf_ex_buffer.alu_func_ctrl){
             case 0: alu_out = alu_input_1 + alu_input_2; break;
@@ -100,7 +108,7 @@ var simulator = {
     	if(!this.hazard_signals.stall)
     		copy_buffer(this.rf_ex_buffer, this.is_rf_buffer);
     	var rf_instr = this.is_rf_buffer.instr;
-    	var opcode = rf_instr >> 26;
+    	var opcode = (rf_instr >> 26) & 0x3F;
     	var sign_imm = (rf_instr << 16) >>> 16;
     	var rs = (rf_instr >> 21) & 0x1F;
     	var rt = (rf_instr >> 16) & 0x1F;
@@ -108,6 +116,7 @@ var simulator = {
     	var funct = rf_instr & 0x3F;
 
     	var control_signals = control_unit.get_signals(opcode, funct);
+		console.log(control_signals);
     	var ra1 = this.reg_file[rs];
     	var ra2 = this.reg_file[rt];
 
@@ -119,7 +128,7 @@ var simulator = {
         	var signal_value = control_signals[control_signal];
         	this.rf_ex_buffer[control_signal] = signal_value;
         }
-		
+
         this.rf_ex_buffer.sign_imm = sign_imm;
         this.rf_ex_buffer.reg_rd_1 = ra1;
         this.rf_ex_buffer.reg_rd_2 = ra2;

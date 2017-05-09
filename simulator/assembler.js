@@ -22,13 +22,20 @@ var assembler = {
         console.log(tokens);
         if(tokens.length == 3){
             // J Format
+            console.log("J-Format");
+            console.log(tokens);
             binary = (this.map[tokens[1]]<<26)+parseInt(tokens[2]);
         }else if(tokens[5] == null){
             // R Format
+            console.log("R-Format");
+            console.log(tokens)
             binary = (0<<26)+(parseInt(tokens[4])<<21)+(parseInt(tokens[2])<<16)+(parseInt(tokens[3])<<11)+(0<<6)+this.map[tokens[1]];
         }else{
             // I Format
+            console.log("I-Format");
+            console.log(tokens);
             binary = (this.map[tokens[1]] << 26)+(parseInt(tokens[3])<<21)+(parseInt(tokens[2])<<16)+parseInt(tokens[5]);
+            console.log(binary);
         }
         return binary;
     },

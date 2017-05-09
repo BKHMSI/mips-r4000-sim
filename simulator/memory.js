@@ -19,10 +19,10 @@ var memory = {
         }
     
         self.last_access = address;
-        value = self.data[address];
-        value += self.data[address+1]<<8;
-        value += self.data[address+2]<<16;
-        value += self.data[address+3]<<24;
+        value = self.data[address+3];
+        value += self.data[address+2]<<8;
+        value += self.data[address+1]<<16;
+        value += self.data[address]<<24;
         return value;
     },
 
@@ -76,10 +76,10 @@ var memory = {
         }
 
         self.last_access = address;
-        self.data[address] = first;
-        self.data[address+1] = second;
-        self.data[address+2] = third;
-        self.data[address+3] = fourth;
+        self.data[address] = fourth;
+        self.data[address+1] = third;
+        self.data[address+2] = second;
+        self.data[address+3] = first;
     },
 
     reset: function () {

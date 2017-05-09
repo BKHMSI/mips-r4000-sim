@@ -16,20 +16,15 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.df_ds_buffer = simulator.df_ds_buffer;
     $scope.ds_tc_buffer = simulator.ds_tc_buffer;
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
-	$scope.hazard_forwarda = simulator.hazard_signals.forward_a;
-	$scope.hazard_forwardb = simulator.hazard_signals.forward_b;
-	$scope.hazard_stall = simulator.hazard_signals.stall;
-	$scope.hazard_flush = simulator.hazard_signals.flush;
 
 	var instr = [];
-	var editor;
+	var editor = null;
 	var code = [];
 
 	$scope.$on('$routeChangeSuccess', function() {
 		// Init Editor
-		if(window.location.href.indexOf("editor") != -1){
+		if(window.location.href.indexOf("editor") != -1 && editor == null){
 			editor = ace.edit("assemblyCode");
-			editor.setValue(project);
 		}
 
 		project = "";
@@ -64,9 +59,12 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 	$scope.assemble = function(){
 		code = editor.getValue().split('\n');
 		console.log("From Assemble");
-		console.log(code);
-		for(var i = 0; i<code.length; i++)
-			instr.push(assembler.assemble(code[i]));
+		for(var i = 0; i<code.length; i++){
+			var binary = assembler.assemble(code[i]);
+			console.log(code[i]);
+			console.log("Inst #"+i+": "+binary);
+			instr.push(binary);
+		}
 		simulator.set_instr(instr);
 		$scope.goTo(2);
 	};
@@ -74,6 +72,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.step = function(){
     	console.log("Clock " + $scope.clock.toString() + " begin.");
 		simulator.hazard_signals = hazard_unit.get_signals();
+		$scope.hazard_signals = simulator.hazard_signals;
+		console.log(simulator.hazard_signals);
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
