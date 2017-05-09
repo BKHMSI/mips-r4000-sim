@@ -23,9 +23,9 @@ function buffer() {
     this.reg_dst_ctrl;
     this.branch_ctrl;
     this.bne_ctrl;
+    this.rs;
 }
-function copy_buffer(x, y)
-{
+function copy_buffer(x, y) {
     x.instr = y.instr;
     x.pc_plus4 = y.pc_plus4;
     x.reg_rd_1 = y.reg_rd_1;
@@ -50,4 +50,10 @@ function copy_buffer(x, y)
     x.reg_dst_ctrl = y.reg_dst_ctrl;
     x.branch_ctrl = y.branch_ctrl;
     x.bne_ctrl = y.bne_ctrl;
+    x.rs = y.rs;
+}
+
+function flush_buffer(x){
+	for(signal in x)
+		x[signal] = 0;
 }

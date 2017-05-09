@@ -5,6 +5,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.continue = "Run"
     $scope.show_all_regs = false;
 	$scope.regs = simulator.reg_file;
+	$scope.memory = memory;
 
     // Init Editor
     var editor = ace.edit("assemblyCode");
@@ -29,6 +30,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     var clock = 0;
     $scope.step = function(){
     	console.log("Clock " + clock.toString() + " begin.");
+    	simulator.hazard_signals = hazard_unit.get_signals();
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
@@ -37,6 +39,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     	simulator.rf();
     	simulator.is();
     	simulator.if();
+    	if(simulator.hazard_signals)
+    		simulator.hazard_signals--;
 
     	console.log("if_is:");
     	console.log(simulator.if_is_buffer);

@@ -18,7 +18,8 @@ var assembler = {
     assemble: function(str){
         str = this.normalize(str);
         var tokens = this.tokenize(str);
-        var binary = 0
+        var binary = 0;
+        console.log(tokens);
         if(tokens.length == 3){
             // J Format
             binary = (this.map[tokens[1]]<<26)+parseInt(tokens[2]);
@@ -35,9 +36,9 @@ var assembler = {
     tokenize: function(str){
 
         // add r1, r2, r3 or addi r1, r2, 5
-        var rgx_1 = "([a-z]{3,4})[rR|$](3[01]|[12]?[0-9]),[rR|$](3[01]|[12]?[0-9]),(?:(?:[rR|$](3[01]|[12]?[0-9]))|([0-9]+))";
+        var rgx_1 = "([a-z]{2,4})[rR$](3[01]|[12]?[0-9]),[rR$](3[01]|[12]?[0-9]),(?:(?:[rR$](3[01]|[12]?[0-9]))|([0-9]+))";
         // lw r1, 0(r3)
-        var rgx_2 =  "([a-z]{2,4})[rR|$]([12]?[0-9]|3[01]),[rR|$]([12]?[0-9]|3[01]|[0-9]+)\([rR|$]([12]?[0-9]|3[01])\)";
+        var rgx_2 =  "([a-z]{2,4})[rR$]([12]?[0-9]|3[01]),[rR$]?([12]?[0-9]|3[01]|[0-9]+)\([rR$]([12]?[0-9]|3[01])\)";
         // jal 500
         var rgx_3 =  "(j|jal)([0-9]+)";
 
