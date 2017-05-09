@@ -10,9 +10,10 @@ var simulator = {
     df_ds_buffer: new buffer(),
     ds_tc_buffer: new buffer(),
     tc_wb_buffer: new buffer(),
+
     set_instr: function(instr){
         for(var i = 0; i<instr.length; i++)
-            this.i_cache[i] = instr[i]
+            this.i_cache[i] = instr[i];
     },
 
 
@@ -26,31 +27,57 @@ var simulator = {
     },
 
     tc: function(){
-    	copy_buffer(this.tc_wb_buffer, this.ds_tc_buffer);
+    	if(!this.hazard_signals.stall)
+    		copy_buffer(this.tc_wb_buffer, this.ds_tc_buffer);
 
     },
 
     ds: function(){
-    	copy_buffer(this.ds_tc_buffer, this.df_ds_buffer);
+    	if(!this.hazard_signals.stall)
+    		copy_buffer(this.ds_tc_buffer, this.df_ds_buffer);
     	if(this.df_ds_buffer.mem_write_en_ctrl)
-            memory.store_word(this.df_ds_buffer.alu_out, this.df_ds_buffer.reg_rd_2);
+            memory.store_word(this.df_ds_buffer.write_data, this.df_ds_buffer.reg_rd_2);
         this.ds_tc_buffer.data_from_mem = memory.load_word(this.df_ds_buffer.alu_out);
 
     },
 
     df: function(){
-    	copy_buffer(this.df_ds_buffer, this.ex_df_buffer);
+    	if(!this.hazard_signals.stall)
+    		copy_buffer(this.df_ds_buffer, this.ex_df_buffer);
 
     },
 
     ex: function(){
-    	copy_buffer(this.ex_df_buffer, this.rf_ex_buffer);
+
+    	if(!this.hazard_signals.stall)
+        	copy_buffer(this.ex_df_buffer, this.rf_ex_buffer);
+       	else
+       		flush_buffer(this.rf_ex_buffer)
+
     	var sign_imm = this.rf_ex_buffer.sign_imm;
     	var alu_fn_ctrl = this.rf_ex_buffer.alu_fn_ctrl;
     	var alusrc_ctrl = this.rf_ex_buffer.alusrc_ctrl;
-    	var alu_input_1 = this.rf_ex_buffer.reg_rd_1;
-    	var alu_input_2 = (alusrc_ctrl) ? sign_imm : this.rf_ex_buffer.reg_rd_2;
+    	var alu_input_1;
+    	var alu_input_2;
     	
+    	switch(this.hazard_signals.forward_a){
+    		case 4: alu_input_1 = this.df_ds_buffer.alu_out; break;
+    		case 3: alu_input_1 = this.ds_tc_buffer.alu_out; break;
+    		case 2: alu_input_1 = this.tc_wb_buffer.alu_out; break;
+    		case 1: alu_input_1 = this.ds_tc_buffer.data_from_mem; break;
+    		case 0: alu_input_1 = this.rf_ex_buffer.reg_rd_1; break;
+    	}
+
+    	switch(this.hazard_signals.forward_b){
+			case 4: alu_input_2 = this.df_ds_buffer.alu_out; break;
+    		case 3: alu_input_2 = this.ds_tc_buffer.alu_out; break;
+    		case 2: alu_input_2 = this.tc_wb_buffer.alu_out; break;
+    		case 1: alu_input_2 = this.ds_tc_buffer.data_from_mem; break;
+    		case 0: alu_input_2 = this.rf_ex_buffer.reg_rd_2; break;
+    	}
+
+    	this.ex_df_buffer.write_data = alu_input_2;
+    	alu_input_2 = (alusrc_ctrl) ? sign_imm : this.rf_ex_buffer.reg_rd_2
     	var alu_out;
         switch(this.rf_ex_buffer.alu_func_ctrl){
             case 0: alu_out = alu_input_1 + alu_input_2; break;
@@ -64,13 +91,14 @@ var simulator = {
             case 8: alu_out = (alu_input_1 < alu_input_2) ? 1 : 0; break;
         }
         var z_flag = alu_out == 0;
-        console.log("alu_input_1 = " + alu_input_1 + ", alu_input_2 = " + alu_input_2);
         this.ex_df_buffer.reg_dst = (this.rf_ex_buffer.reg_dst_ctrl) ? this.rf_ex_buffer.addrI_dst : this.rf_ex_buffer.addrR_dst;
         this.ex_df_buffer.pcbranch = this.rf_ex_buffer.pcplus4 + this.rf_ex_buffer.sign_imm * 4;
         this.ex_df_buffer.alu_out = alu_out;
     },
+
     rf: function(){
-    	copy_buffer(this.rf_ex_buffer, this.is_rf_buffer);
+    	if(!this.hazard_signals.stall)
+    		copy_buffer(this.rf_ex_buffer, this.is_rf_buffer);
     	var rf_instr = this.is_rf_buffer.instr;
     	var opcode = rf_instr >> 26;
     	var sign_imm = (rf_instr << 16) >>> 16;
@@ -96,9 +124,11 @@ var simulator = {
         this.rf_ex_buffer.reg_rd_2 = ra2;
         this.rf_ex_buffer.addrI_dst = rt;
         this.rf_ex_buffer.addrR_dst = rd;
+        this.rf_ex_buffer.rs = rs;
     },
     is: function(){
-    	copy_buffer(this.is_rf_buffer, this.if_is_buffer);
+    	if(!this.hazard_signals.stall)
+    		copy_buffer(this.is_rf_buffer, this.if_is_buffer);
     	var is_pc = this.if_is_buffer.pc;
     	var is_instr = this.i_cache[is_pc / 4];
     	this.is_rf_buffer.pc_plus4 = (is_pc == undefined) ? undefined : is_pc + 4;
