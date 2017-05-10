@@ -16,15 +16,20 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.df_ds_buffer = simulator.df_ds_buffer;
     $scope.ds_tc_buffer = simulator.ds_tc_buffer;
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
+	$scope.hazard_forwarda = simulator.hazard_signals.forward_a;
+	$scope.hazard_forwardb = simulator.hazard_signals.forward_b;
+	$scope.hazard_stall = simulator.hazard_signals.stall;
+	$scope.hazard_flush = simulator.hazard_signals.flush;
 
 	var instr = [];
-	var editor = null;
+	var editor;
 	var code = [];
 
 	$scope.$on('$routeChangeSuccess', function() {
 		// Init Editor
-		if(window.location.href.indexOf("editor") != -1 && editor == null){
+		if(window.location.href.indexOf("editor") != -1){
 			editor = ace.edit("assemblyCode");
+			editor.setValue(project);
 		}
 
 		project = "";
@@ -59,12 +64,9 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 	$scope.assemble = function(){
 		code = editor.getValue().split('\n');
 		console.log("From Assemble");
-		for(var i = 0; i<code.length; i++){
-			var binary = assembler.assemble(code[i]);
-			console.log(code[i]);
-			console.log("Inst #"+i+": "+binary);
-			instr.push(binary);
-		}
+		console.log(code);
+		for(var i = 0; i<code.length; i++)
+			instr.push(assembler.assemble(code[i]));
 		simulator.set_instr(instr);
 		$scope.goTo(2);
 	};
@@ -72,8 +74,6 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.step = function(){
     	console.log("Clock " + $scope.clock.toString() + " begin.");
 		simulator.hazard_signals = hazard_unit.get_signals();
-		$scope.hazard_signals = simulator.hazard_signals;
-		console.log(simulator.hazard_signals);
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
@@ -84,29 +84,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     	simulator.if();
     	if(simulator.hazard_signals.stall)
     		simulator.hazard_signals.stall--;
-
-    	console.log("if_is:");
-    	console.log(simulator.if_is_buffer);
-
-    	console.log("is_rf:");
-    	console.log(simulator.is_rf_buffer);
     	
-    	console.log("rf_ex:");
-	    console.log(simulator.rf_ex_buffer);
-
-	    console.log("ex_df:");
-	    console.log(simulator.ex_df_buffer);
-	        	
-	    console.log("df_ds:");
-	    console.log(simulator.df_ds_buffer);
-	        	
-	    console.log("ds_tc:");
-	    console.log(simulator.ds_tc_buffer);
-
-	    console.log("tc_wb:");
-	    console.log(simulator.tc_wb_buffer);
-
-    	console.log("Clock " + $scope.clock.toString() + " end.\n\n");
     	$scope.clock ++;
     };
 }]);
