@@ -31,7 +31,10 @@
 
 
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">IF/IS Buffer</h4></div>
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">IF/IS Buffer</h4>
+                    <h5 style="float:right">{{if_is_buffer.instr | HexFilter}}</h5>
+                </div>
                 <div class="panel-body">
                     <table style="color:black" class="table table-condensed table-striped">
                         <thead>
@@ -49,7 +52,10 @@
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">IS/RF Buffer</h4></div>
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">IS/RF Buffer</h4>
+                    <h5 style="float:right">{{is_rf_buffer.instr | HexFilter}}</h5>
+                </div>
                 <div class="panel-body">
                     <table style="color:black" class="table table-condensed table-striped">
                         <thead>
@@ -68,7 +74,10 @@
             </div>
         
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">RF/EX Buffer</h4></div>
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">RF/EX Buffer</h4>
+                    <h5 style="float:right">{{rf_ex_buffer.instr | HexFilter}}</h5>
+                </div>
                 <div class="panel-body">
                     <table style="color:black" class="table table-condensed table-striped">
                         <thead>
@@ -113,7 +122,10 @@
             </div>
         
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">EX/DF Buffer</h4></div>
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">EX/DF Buffer</h4>
+                    <h5 style="float:right">{{ex_df_buffer.instr | HexFilter}}</h5>
+                </div>
                 <div class="panel-body">
                     <table style="color:black" class="table table-condensed table-striped">
                         <thead>
@@ -148,7 +160,10 @@
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">DF/DS Buffer</h4></div>
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">DF/DS Buffer</h4>
+                    <h5 style="float:right">{{df_ds_buffer.instr | HexFilter}}</h5>
+                </div>
                 <div class="panel-body">
                     <table style="color:black" class="table table-condensed table-striped">
                         <thead>
@@ -183,7 +198,10 @@
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">DS/TC Buffer</h4></div>
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">DS/TC Buffer</h4>
+                    <h5 style="float:right">{{ds_tc_buffer.instr | HexFilter}}</h5>
+                </div>
                 <div class="panel-body">
                     <table style="color:black" class="table table-condensed table-striped">
                         <thead>
@@ -220,7 +238,10 @@
             </div>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">TC/WB Buffer</h4></div>
+                <div class="panel-heading">
+                    <h4 class="panel-title" style="display:inline-block">TC/WB Buffer</h4>
+                    <h5 style="float:right">{{tc_wb_buffer.instr | HexFilter}}</h5>
+                </div>
                 <div class="panel-body">
                     <table style="color:black" class="table table-condensed table-striped">
                         <thead>

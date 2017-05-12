@@ -18,18 +18,20 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
 
 	var instr = [];
-	var editor = null;
+	var editor;
 	var code = [];
 
 	$scope.$on('$routeChangeSuccess', function() {
 		// Init Editor
-		if(window.location.href.indexOf("editor") != -1 && editor == null){
+		if(window.location.href.indexOf("editor") != -1){
 			editor = ace.edit("assemblyCode");
+			var assemblyMode = require("ace/mode/assembly_x86").Mode;
+			editor.getSession().setMode(new assemblyMode());
+			project = "";
+			for(var i = 0; i<code.length; i++) 
+				project += code[i]+"\n";
+			editor.setValue(project);
 		}
-
-		project = "";
-		for(var i = 0; i<code.length; i++) 
-			project += code[i]+"\n";
     });
 
 	$scope.goTo = function(tab){
@@ -58,11 +60,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
 	$scope.assemble = function(){
 		code = editor.getValue().split('\n');
-		console.log("From Assemble");
 		for(var i = 0; i<code.length; i++){
 			var binary = assembler.assemble(code[i]);
-			console.log(code[i]);
-			console.log("Inst #"+i+": "+binary);
 			instr.push(binary);
 		}
 		simulator.set_instr(instr);
