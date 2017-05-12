@@ -24,6 +24,9 @@ function buffer() {
     this.branch_ctrl;
     this.bne_ctrl;
     this.rs;
+    this.branch_pc;
+    this.will_branch;
+    this.predicted_to_branch;
 }
 function copy_buffer(x, y) {
     x.instr = y.instr;
@@ -51,9 +54,13 @@ function copy_buffer(x, y) {
     x.branch_ctrl = y.branch_ctrl;
     x.bne_ctrl = y.bne_ctrl;
     x.rs = y.rs;
+    x.branch_pc = y.branch_pc;
+    x.will_branch = y.will_branch;
+    x.predicted_to_branch = y.predicted_to_branch;
 }
 
 function flush_buffer(x){
 	for(signal in x)
 		x[signal] = 0;
+	x.pc = undefined;
 }
