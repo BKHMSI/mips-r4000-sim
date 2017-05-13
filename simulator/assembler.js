@@ -29,7 +29,7 @@ var assembler = {
             // R Format
             console.log("R-Format");
             console.log(tokens)
-            binary = (0<<26)+(parseInt(tokens[4])<<21)+(parseInt(tokens[2])<<16)+(parseInt(tokens[3])<<11)+(0<<6)+this.map[tokens[1]];
+            binary = (0<<26)+(parseInt(tokens[3])<<21)+(parseInt(tokens[4])<<16)+(parseInt(tokens[2])<<11)+(0<<6)+this.map[tokens[1]];
         }else{
             // I Format
             console.log("I-Format");
@@ -63,42 +63,3 @@ var assembler = {
         return str.replace(/ /g,'').toLowerCase();
     }
 }
-
-
-
-// switch(tokens[1]){
-//     case "add":
-//         // opcode, rs, rt, rd, shamt, funct
-//         binary = (0<<26)+(tokens[4]<<21)+(tokens[2]<<16)+(tokens[3]<<11)+(0<<6)+0x20;
-//         break;
-//     case "addi":
-//         // opcode, rs, rt, imm
-//         binary = (0<<0x8)+(tokens[3]<<21)+(tokens[2]<<16)+tokens[5];
-//         break;
-//     case "sub":
-//         // opcode, rs, rt, rd, shamt, funct
-//         binary = (0<<26)+(tokens[4]<<21)+(tokens[2]<<16)+(tokens[3]<<11)+(0<<6)+0x22;
-//         break;
-//     case "xor":
-//         // opcode, rs, rt, rd, shamt, funct
-//         binary = (0<<26)+(tokens[4]<<21)+(tokens[2]<<16)+(tokens[3]<<11)+(0<<6)+0x26;
-//         break;
-//     case "lw":
-//         // opcode, rs, rt, imm
-//         binary = (0<<0x23)+(tokens[3]<<21)+(tokens[2]<<16)+tokens[5];
-//         break;
-//     case "sw":
-//         // opcode, rs, rt, imm
-//         binary = (0<<0x23)+(tokens[3]<<21)+(tokens[2]<<16)+tokens[5];
-//         break;
-//     case "ble":
-//         break;
-//     case "slt":
-//         break;
-//     case "j":
-//         break;
-//     case "jal":
-//         break;
-//     case "jr":
-//         break;
-// }

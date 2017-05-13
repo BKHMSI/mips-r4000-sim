@@ -16,10 +16,6 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.df_ds_buffer = simulator.df_ds_buffer;
     $scope.ds_tc_buffer = simulator.ds_tc_buffer;
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
-	$scope.hazard_forwarda = simulator.hazard_signals.forward_a;
-	$scope.hazard_forwardb = simulator.hazard_signals.forward_b;
-	$scope.hazard_stall = simulator.hazard_signals.stall;
-	$scope.hazard_flush = simulator.hazard_signals.flush;
 
 	var instr = [];
 	var editor;
@@ -31,10 +27,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 			editor = ace.edit("assemblyCode");
 			var assemblyMode = require("ace/mode/assembly_x86").Mode;
 			editor.getSession().setMode(new assemblyMode());
-			project = "";
-			for(var i = 0; i<code.length; i++) 
-				project += code[i]+"\n";
-			editor.setValue(project);
+			editor.setValue(code_buffer.get_str());
 		}
     });
 
@@ -50,8 +43,12 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 				window.location.href = "#memory";
 				break;
 			case 2:
-				$("#cpu_tab").addClass("active");
-				window.location.href = "#cpu";
+				if(code_buffer.is_assemble){
+					$("#cpu_tab").addClass("active");
+					window.location.href = "#cpu";
+				}else{
+					$scope.error = "You need to assemble code first";
+				}
 				break;
 		}
 	};
@@ -61,20 +58,54 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
       return $scope.show_all_regs ? $scope.regs:$scope.regs.slice(0,16);
     };
 
+	$scope.reset = function(){
+		$scope.goTo(0);
+		$scope.clock = 0;
+		code = [];
+		instr = [];
+		memory.reset();
+		simulator.reset_reg_file();
+		code_buffer.reset_code();
+		hazard_unit.reset_signals();
+		flush_buffer(simulator.if_is_buffer)
+		flush_buffer(simulator.is_rf_buffer);
+		flush_buffer(simulator.rf_ex_buffer);
+		flush_buffer(simulator.ex_df_buffer);
+		flush_buffer(simulator.df_ds_buffer);
+		flush_buffer(simulator.ds_tc_buffer);
+		flush_buffer(simulator.tc_wb_buffer);
+	};
+
 
 	$scope.assemble = function(){
 		code = editor.getValue().split('\n');
+		code_buffer.set_code(code);
+		var error = false;
+		var binary = 0;
 		for(var i = 0; i<code.length; i++){
-			var binary = assembler.assemble(code[i]);
-			instr.push(binary);
+			if(code[i].trim() != ""){
+				try{
+					binary = assembler.assemble(code[i]);
+				}catch(err){
+					error=  true;
+					$scope.error = "Syntax Error in Line #: "+(i+1);
+                 	if(!$scope.$$phase) $scope.$apply();
+					alert("Syntax Error in Line #: "+(i+1));
+				}
+				if(!error) instr.push(binary);
+			}
 		}
-		simulator.set_instr(instr);
-		$scope.goTo(2);
+		if(!error){
+			simulator.set_instr(instr);
+			code_buffer.is_assemble = true;
+			$scope.goTo(2);	
+		}
 	};
 
     $scope.step = function(){
     	console.log("Clock " + $scope.clock.toString() + " begin.");
 		simulator.hazard_signals = hazard_unit.get_signals();
+		$scope.hazard_signals = simulator.hazard_signals;
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
@@ -85,7 +116,6 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     	simulator.if();
     	if(simulator.hazard_signals.stall)
     		simulator.hazard_signals.stall--;
-    	
     	$scope.clock ++;
     };
 }]);

@@ -63,7 +63,11 @@
     </nav>
 
     <div class="container">
-        <div class="alert alert-danger" ng-hide="error === ''">{{error}}</div>
+        <div class="alert alert-danger alert-dismissable fade in" ng-hide="error == ''">
+            <a class="close" ng-click="error = ''" aria-label="close">&times;</a>
+            <strong>{{error}}</strong>
+        </div>
+        <!--<div class="alert alert-danger" ng-hide="error === ''">{{error}}</div>-->
         <ul class="nav nav-tabs">
             <li id="editor_tab" class="active"><a style="cursor:pointer" ng-click="goTo(0)">Editor</a></li>
             <li id="mem_tab"><a style="cursor:pointer" ng-click="goTo(1)">Memory</a></li>

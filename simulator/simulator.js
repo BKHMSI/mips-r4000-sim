@@ -17,12 +17,17 @@ var simulator = {
             this.i_cache[i] = instr[i];
     },
 
+	reset_reg_file: function(){
+		for(i in this.reg_file)
+			this.reg_file[i] = 0;
+	},
 
     wb: function(){
         if(this.tc_wb_buffer.regwrite_en_ctrl){
         	var reg_dst = (this.tc_wb_buffer.reg_dst_ctrl) ? this.tc_wb_buffer.addrR_dst : this.tc_wb_buffer.addrI_dst;
             this.reg_file[reg_dst] = (this.tc_wb_buffer.memtoreg_ctrl) ? this.tc_wb_buffer.data_from_mem : this.tc_wb_buffer.alu_out;
-            console.log(this.reg_file);
+			this.reg_file[0] = 0;
+			console.log(this.reg_file);
         }
     },
 
@@ -129,6 +134,7 @@ var simulator = {
         	var signal_value = control_signals[control_signal];
         	this.rf_ex_buffer[control_signal] = signal_value;
         }
+		
 		this.rf_ex_buffer.will_branch = ra1 == ra2 && this.rf_ex_buffer.branch ||
 										ra1 != ra2 && this.rf_ex_buffer.bne;
 		this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + sign_imm * 4;

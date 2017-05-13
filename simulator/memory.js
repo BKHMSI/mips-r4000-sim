@@ -97,3 +97,26 @@ var memory = {
         return mem;
     }
 }
+
+code_buffer = {
+    code: [],
+    is_assemble: false,
+    set_code: function(instr){
+        for(var i = 0; i<instr.length; i++)
+            this.code.push(instr[i])
+    },
+
+    get_str: function(){
+        project = "";
+        for(var i = 0; i<this.code.length; i++) 
+            project += this.code[i]+(i == this.code.length-1 ? "":"\n")
+        return project;
+    },
+
+    reset_code: function(){
+        this.is_assemble = false;
+        while(this.code.length)
+            this.code.pop();
+    }
+
+}
