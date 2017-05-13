@@ -24,8 +24,8 @@ var simulator = {
 
     wb: function(){
         if(this.tc_wb_buffer.regwrite_en_ctrl){
-        	var reg_dst = (this.tc_wb_buffer.reg_dst_ctrl) ? this.tc_wb_buffer.addrR_dst : this.tc_wb_buffer.addrI_dst;
-            this.reg_file[reg_dst] = (this.tc_wb_buffer.memtoreg_ctrl) ? this.tc_wb_buffer.data_from_mem : this.tc_wb_buffer.alu_out;
+        	//var reg_dst = (this.tc_wb_buffer.reg_dst_ctrl) ? this.tc_wb_buffer.addrR_dst : this.tc_wb_buffer.addrI_dst;
+            this.reg_file[this.tc_wb_buffer.reg_dst] = (this.tc_wb_buffer.memtoreg_ctrl) ? this.tc_wb_buffer.data_from_mem : this.tc_wb_buffer.alu_out;
 			this.reg_file[0] = 0;
 			console.log(this.reg_file);
         }
