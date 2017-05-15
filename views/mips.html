@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 style="display:inline-block; padding-right:10px" class="panel-title">MIPS Convertor</h4>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label for="inputdefault">MIPS Code</label>
+            <input class="form-control" id="inputdefault" type="text" ng-model="mips_conv">
+        </div> 
+        <label for="inputdefault">Machine Code</label>
+         <h4>{{mips_assemble | HexFilter}}</h4>
+        <button type="button" class="btn btn-success" ng-click="mips_convert()"><span class="glyphicon glyphicon-play"></span>Convert</button>
+    </div>
+</div>

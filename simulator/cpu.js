@@ -7,6 +7,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 	$scope.regs = simulator.reg_file;
 	$scope.clock = 0;
 	$scope.memory = memory;
+	$scope.mips_conv;
+	$scope.mips_assemble;
 
 	// Buffers
 	$scope.if_is_buffer = simulator.if_is_buffer;
@@ -32,7 +34,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     });
 
 	$scope.goTo = function(tab){
-		$("#editor_tab, #mem_tab, #cpu_tab").removeClass("active");
+		$("#editor_tab, #mem_tab, #cpu_tab, #mips_conv").removeClass("active");
 		switch(tab){
 			case 0: 
 				$("#editor_tab").addClass("active");
@@ -46,9 +48,12 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 				if(code_buffer.is_assemble){
 					$("#cpu_tab").addClass("active");
 					window.location.href = "#cpu";
-				}else{
+				}else
 					$scope.error = "You need to assemble code first";
-				}
+				break;
+			case 3:
+				$("#mips_conv").addClass("active");
+				window.location.href = "#convertor";
 				break;
 		}
 	};
@@ -117,9 +122,19 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     	simulator.rf();
     	simulator.is();
     	simulator.if();
-    	if(simulator.hazard_signals.stall)
+		if(simulator.hazard_signals.stall)
     		simulator.hazard_signals.stall--;
     	$scope.clock ++;
     };
+
+	$scope.mips_convert = function(){
+		try{
+			binary = assembler.assemble($scope.mips_conv);
+			$scope.mips_assemble = binary;
+		}catch(ex){
+			$scope.mips_assemble = "Syntax Error";
+		}
+	}
+
 }]);
 

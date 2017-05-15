@@ -29,6 +29,7 @@ function buffer() {
     this.predicted_to_branch;
     this.code;
 }
+
 function copy_buffer(x, y) {
     x.instr = y.instr;
     x.pc_plus4 = y.pc_plus4;

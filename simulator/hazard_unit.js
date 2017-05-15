@@ -53,9 +53,14 @@ var hazard_unit = {
 
 		rs = (simulator.is_rf_buffer.instr >> 21) & 0x1F;
 		rt = (simulator.is_rf_buffer.instr >> 16) & 0x1F;
-		rd_1 = simulator.ex_df_buffer.reg_dst;
-		rd_2 = simulator.df_ds_buffer.reg_dst;
-		rd_3 = simulator.ds_tc_buffer.reg_dst;
+		rd_1 = simulator.ex_df_buffer.reg_dst; // df_ds_reg_dst
+		rd_2 = simulator.df_ds_buffer.reg_dst; // ds_tc_reg_dst
+		rd_3 = simulator.ds_tc_buffer.reg_dst; 
+		rf_ex_rd = (simulator.rf_ex_buffer.reg_dst_ctrl) ? simulator.rf_ex_buffer.addrI_dst : simulator.rf_ex_buffer.addrR_dst;
+		console.log("From Stall: ");
+		console.log("rs: "+rs+" rt: "+rt);
+		console.log("RD_1: "+rd_1+" RD_2: "+rd_2+" RD_3: "+rd_3);
+		console.log("RF/EX: "+rf_ex_rd);
 
 		//forwarding(d)
 		if((rs == simulator.rf_ex_buffer.reg_dst) && simulator.rf_ex_buffer.regwrite_en_ctrl)
@@ -86,26 +91,25 @@ var hazard_unit = {
 			signals.forward_e = 0;
 		
 		// stalling
-
 		signals.stall = signals.flush = 0;
 
-		if(simulator.df_ds_buffer.memtoreg_ctrl && (rd_2 == rt || rd_2 == rs)){
+		if(simulator.ex_df_buffer.memtoreg_ctrl && (rd_1 == rt || rd_1 == rs)){
     		signals.stall = 1;
     		signals.flush = 1;
 		}
 
 
-		if(simulator.ex_df_buffer.memtoreg_ctrl && (rd_1 == rt || rd_1 == rs)){
-    		signals.stall = 2
+		if(simulator.rf_ex_buffer.memtoreg_ctrl && (rf_ex_rd == rt || rf_ex_rd == rs)){
+    		signals.stall = 2;
     		signals.flush = 1;
 		}
 
-		if(simulator.ds_tc_buffer.memtoreg_ctrl && rd_3 == rs)
+		if(simulator.ds_tc_buffer.memtoreg_ctrl && rd_1 == rs)
     		signals.forward_f = 1;
 		else 
 			signals.forward_f = 0;
 		
-		if(simulator.ds_tc_buffer.memtoreg_ctrl && rd_3 == rt)
+		if(simulator.ds_tc_buffer.memtoreg_ctrl && rd_1 == rt)
     		signals.forward_g = 1;
 		else 
 			signals.forward_g = 0;

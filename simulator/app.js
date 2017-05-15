@@ -23,6 +23,11 @@ app.config(function($routeProvider) {
             templateUrl : 'views/buffers.html',
             controller  : 'CPUController'
         })
+
+        .when('/convertor', {
+            templateUrl : 'views/mips.html',
+            controller  : 'CPUController'
+        })
 });
 
 angular.module('BinFilter', []).filter('BinFilter', function() {
