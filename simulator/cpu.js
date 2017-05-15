@@ -23,7 +23,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 
 	$scope.$on('$routeChangeSuccess', function() {
 		// Init Editor
-		if(window.location.href.indexOf("editor") != -1){
+		if(window.location.href.indexOf("cpu") == -1 &&window.location.href.indexOf("memory") == -1){
 			editor = ace.edit("assemblyCode");
 			var assemblyMode = require("ace/mode/assembly_x86").Mode;
 			editor.getSession().setMode(new assemblyMode());
@@ -74,6 +74,8 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 		flush_buffer(simulator.df_ds_buffer);
 		flush_buffer(simulator.ds_tc_buffer);
 		flush_buffer(simulator.tc_wb_buffer);
+		simulator.pc=0;
+		console.log("SIMULATOR PC: " + simulator.pc);
 	};
 
 
