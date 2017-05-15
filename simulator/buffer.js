@@ -27,6 +27,7 @@ function buffer() {
     this.branch_pc;
     this.will_branch;
     this.predicted_to_branch;
+    this.code;
 }
 function copy_buffer(x, y) {
     x.instr = y.instr;
@@ -57,6 +58,7 @@ function copy_buffer(x, y) {
     x.branch_pc = y.branch_pc;
     x.will_branch = y.will_branch;
     x.predicted_to_branch = y.predicted_to_branch;
+    x.code = y.code;
 }
 
 function flush_buffer(x){

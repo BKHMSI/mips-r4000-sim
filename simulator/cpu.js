@@ -66,7 +66,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 		memory.reset();
 		simulator.reset_reg_file();
 		code_buffer.reset_code();
-		hazard_unit.reset_signals();
+		//hazard_unit.reset_signals();
 		flush_buffer(simulator.if_is_buffer)
 		flush_buffer(simulator.is_rf_buffer);
 		flush_buffer(simulator.rf_ex_buffer);
@@ -98,6 +98,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 			}
 		}
 		if(!error){
+			simulator.set_code(code);
 			simulator.set_instr(instr);
 			code_buffer.is_assemble = true;
 			$scope.goTo(2);	

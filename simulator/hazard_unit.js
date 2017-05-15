@@ -1,5 +1,6 @@
 var hazard_unit = {
 
+	signals: {forward_a:0,forward_b:0,forward_c:0,forward_d:0,forwarde:0,forward_g:0,stall:0,flush:0},
 	get_signals : function(){
 		var signals = {forward_a:0,forward_b:0,forward_c:0,forward_d:0,forwarde:0,forward_g:0,stall:0,flush:0};
 		// forwarding(a)
@@ -58,43 +59,33 @@ var hazard_unit = {
 
 		//forwarding(d)
 		if((rs == simulator.rf_ex_buffer.reg_dst) && simulator.rf_ex_buffer.regwrite_en_ctrl)
-			forward_d = 5;
+			signals.forward_d = 5;
+		else if((rs == simulator.ex_df_buffer.reg_dst) && simulator.ex_df_buffer.regwrite_en_ctrl)
+			signals.forward_d = 4;
+		else if((rs == simulator.df_ds_buffer.reg_dst) && simulator.df_ds_buffer.regwrite_en_ctrl)
+			signals.forward_d = 3;
+		else if((rs == simulator.ds_tc_buffer.reg_dst) && simulator.ds_tc_buffer.regwrite_en_ctrl)
+			signals.forward_d = 2;
+		else if((rs == simulator.tc_wb_buffer.reg_dst) && simulator.tc_wb_buffer.regwrite_en_ctrl)
+			signals.forward_d = 1;
 		else
-			if((rs == simulator.ex_df_buffer.reg_dst) && simulator.ex_df_buffer.regwrite_en_ctrl)
-				forward_d = 4;
-			else
-				if((rs == simulator.df_ds_buffer.reg_dst) && simulator.df_ds_buffer.regwrite_en_ctrl)
-					forward_d = 3;
-				else 
-					if((rs == simulator.ds_tc_buffer.reg_dst) && simulator.ds_tc_buffer.regwrite_en_ctrl)
-						forward_d = 2;
-					else
-						if((rs == simulator.tc_wb_buffer.reg_dst) && simulator.tc_wb_buffer.regwrite_en_ctrl)
-							forward_d = 1;
-						else
-							forward_d = 0;
+			signals.forward_d = 0;
 
 		//forwarding(e)
 		if((rt == simulator.rf_ex_buffer.reg_dst) && simulator.rf_ex_buffer.regwrite_en_ctrl)
-			forward_e = 5;
+			signals.forward_e = 5;
+		else if((rt == simulator.ex_df_buffer.reg_dst) && simulator.ex_df_buffer.regwrite_en_ctrl)
+			signals.forward_e = 4;
+		else if((rt == simulator.df_ds_buffer.reg_dst) && simulator.df_ds_buffer.regwrite_en_ctrl)
+			signals.forward_e = 3;
+		else if((rt == simulator.ds_tc_buffer.reg_dst) && simulator.ds_tc_buffer.regwrite_en_ctrl)
+			signals.forward_e = 2;
+		else if((rt == simulator.tc_wb_buffer.reg_dst) && simulator.tc_wb_buffer.regwrite_en_ctrl)
+			signals.forward_e = 1;
 		else
-			if((rt == simulator.ex_df_buffer.reg_dst) && simulator.ex_df_buffer.regwrite_en_ctrl)
-				forward_e = 4;
-			else
-				if((rt == simulator.df_ds_buffer.reg_dst) && simulator.df_ds_buffer.regwrite_en_ctrl)
-					forward_e = 3;
-				else 
-					if((rt == simulator.ds_tc_buffer.reg_dst) && simulator.ds_tc_buffer.regwrite_en_ctrl)
-						forward_e = 2;
-					else
-						if((rt == simulator.tc_wb_buffer.reg_dst) && simulator.tc_wb_buffer.regwrite_en_ctrl)
-							forward_e = 1;
-						else
-							forward_e = 0;
+			signals.forward_e = 0;
 		
 		// stalling
-
-	
 
 		signals.stall = signals.flush = 0;
 
@@ -110,17 +101,17 @@ var hazard_unit = {
 		}
 
 		if(simulator.ds_tc_buffer.memtoreg_ctrl && rd_3 == rs)
-    		forward_f = 1;
+    		signals.forward_f = 1;
 		else 
-			forward_f = 0;
+			signals.forward_f = 0;
 		
 		if(simulator.ds_tc_buffer.memtoreg_ctrl && rd_3 == rt)
-    		forward_g = 1;
+    		signals.forward_g = 1;
 		else 
-			forward_g = 0;
+			signals.forward_g = 0;
 		
+		this.signals = signals;
 		return signals;
-
 	}
 
 } 
