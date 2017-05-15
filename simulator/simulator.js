@@ -21,10 +21,9 @@ var simulator = {
 		for(i in this.reg_file)
 			this.reg_file[i] = 0;
 	},
-
     wb: function(){
         if(this.tc_wb_buffer.regwrite_en_ctrl){
-        	//var reg_dst = (this.tc_wb_buffer.reg_dst_ctrl) ? this.tc_wb_buffer.addrR_dst : this.tc_wb_buffer.addrI_dst;
+        		//var reg_dst = (this.tc_wb_buffer.reg_dst_ctrl) ? this.tc_wb_buffer.addrR_dst : this.tc_wb_buffer.addrI_dst;
             this.reg_file[this.tc_wb_buffer.reg_dst] = (this.tc_wb_buffer.memtoreg_ctrl) ? this.tc_wb_buffer.data_from_mem : this.tc_wb_buffer.alu_out;
 			this.reg_file[0] = 0;
 			console.log(this.reg_file);
@@ -40,17 +39,22 @@ var simulator = {
     ds: function(){
     	if(!this.hazard_signals.stall)
     		copy_buffer(this.ds_tc_buffer, this.df_ds_buffer);
+
+		var writedata;
+
+		
+		switch(this.hazard_signals.forward_c){
+			case 2: writedata = this.tc_wb_buffer.data_from_mem; break;
+			case 1: writedata = reg_file[this.df_ds_buffer.reg_dst]; break;
+			default:writedata = this.df_ds_buffer.write_data;
+		}
+
     	if(this.df_ds_buffer.mem_write_en_ctrl){
 			console.log(this.df_ds_buffer.write_data);
-            memory.store_word(this.df_ds_buffer.alu_out, this.df_ds_buffer.write_data);
+            memory.store_word(this.df_ds_buffer.alu_out, writedata);
 		}
         this.ds_tc_buffer.data_from_mem = memory.load_word(this.df_ds_buffer.alu_out);
 
-		switch(this.hazard_signals.forward_c){
-			case 2: this.ds_tc_buffer.write_data = this.tc_wb_buffer.data_from_mem; break;
-			case 1: this.ds_tc_buffer.write_data = this.reg_file[this.ds_tc_buffer.reg_dst]; break;
-			default: break;
-		}
     },
 
     df: function(){
@@ -70,15 +74,18 @@ var simulator = {
     	var alusrc_ctrl = this.rf_ex_buffer.alusrc_ctrl;
     	var alu_input_1;
     	var alu_input_2;
-    	var alu_input_tmp; 
+    	var alu_input_tmp;
+		var alu_input_tmp_1; 
+		var alu_input_tmp_2; 
 
     	switch(this.hazard_signals.forward_a){
-    		case 4: alu_input_1 = this.df_ds_buffer.alu_out; break;
-    		case 3: alu_input_1 = this.ds_tc_buffer.alu_out; break;
-    		case 2: alu_input_1 = this.tc_wb_buffer.alu_out; break;
-    		case 1: alu_input_1 = this.reg_file[this.rf_ex_buffer.rs]; break;
-    		case 0: alu_input_1 = this.rf_ex_buffer.reg_rd_1; break;
+    		case 4: alu_input_tmp_1 = this.df_ds_buffer.alu_out; break;
+    		case 3: alu_input_tmp_1 = this.ds_tc_buffer.alu_out; break;
+    		case 2: alu_input_tmp_1 = this.tc_wb_buffer.alu_out; break;
+    		case 1: alu_input_tmp_1 = this.reg_file[this.rf_ex_buffer.rs]; break;
+    		case 0: alu_input_tmp_1 = this.rf_ex_buffer.reg_rd_1; break;
     	}
+		alu_input_1 = (this.hazard_signals.forward_f) ? this.tc_wb_buffer.data_from_mem : alu_input_tmp_1;
 
     	switch(this.hazard_signals.forward_b){
 			case 4: alu_input_tmp = this.df_ds_buffer.alu_out; break;
@@ -87,8 +94,9 @@ var simulator = {
     		case 1: alu_input_tmp = this.reg_file[this.rf_ex_buffer.addrI_dst]; break;
     		case 0: alu_input_tmp = this.rf_ex_buffer.reg_rd_2; break;
     	}
-
-		alu_input_2 = (alusrc_ctrl) ? sign_imm : alu_input_tmp;
+		
+		alu_input_tmp_2 = (this.hazard_signals.forward_g) ? this.tc_wb_buffer.data_from_mem : alu_input_tmp;
+		alu_input_2 = (alusrc_ctrl) ? sign_imm : alu_input_tmp_2;
 		console.log("forward_a " + this.hazard_signals.forward_a);
 		console.log("forward_b " + this.hazard_signals.forward_b);
     	this.ex_df_buffer.write_data = alu_input_tmp;
@@ -120,7 +128,8 @@ var simulator = {
     	var rt = (rf_instr >> 16) & 0x1F;
     	var rd = (rf_instr >> 11) & 0x1F;
     	var funct = rf_instr & 0x3F;
-
+		var br_1=0;
+		var br_2=0;
     	var control_signals = control_unit.get_signals(opcode, funct);
 		console.log(control_signals);
     	var ra1 = this.reg_file[rs];
@@ -134,9 +143,24 @@ var simulator = {
         	var signal_value = control_signals[control_signal];
         	this.rf_ex_buffer[control_signal] = signal_value;
         }
-		
-		this.rf_ex_buffer.will_branch = ra1 == ra2 && this.rf_ex_buffer.branch ||
-										ra1 != ra2 && this.rf_ex_buffer.bne;
+		switch(forward_d)
+		{
+			case 5: br_1 = this.ex_df_buffer.alu_out;break;
+			case 4: br_1 = this.df_ds_buffer.alu_out;break;
+			case 3: br_1 = this.ds_tc_buffer.alu_out;break;
+			case 2: br_1 = this.tc_wb_buffer.alu_out;break;
+			default:br_1 = ra1;
+		}
+		switch(forward_e)
+		{
+			case 5: br_2 = this.ex_df_buffer.alu_out;break;
+			case 4: br_2 = this.df_ds_buffer.alu_out;break;
+			case 3: br_2 = this.ds_tc_buffer.alu_out;break;
+			case 2: br_2 = this.tc_wb_buffer.alu_out;break;
+			default:br_2 = ra2;
+		}
+		this.rf_ex_buffer.will_branch = br_1 == br_2 && this.rf_ex_buffer.branch ||
+										br_1 != br_2 && this.rf_ex_buffer.bne;
 		this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + sign_imm * 4;
 		branch_predictor.update(this.is_rf_buffer.pc_plus4, this.rf_ex_buffer.branch_pc, this.rf_ex_buffer.will_branch);
         this.rf_ex_buffer.sign_imm = sign_imm;
