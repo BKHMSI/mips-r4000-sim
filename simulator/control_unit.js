@@ -2,7 +2,6 @@ var control_unit ={
 
 	get_signals : function(opcode, funct){
 		var control_signals = {};
-		console.log("OPCODE: "+opcode);
 		switch(opcode){
 			case 0x0: // R - type
 				control_signals.memtoreg_ctrl = 0;

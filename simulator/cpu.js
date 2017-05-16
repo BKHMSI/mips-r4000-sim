@@ -85,7 +85,6 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 		flush_buffer(simulator.ds_tc_buffer);
 		flush_buffer(simulator.tc_wb_buffer);
 		simulator.pc=0;
-		console.log("SIMULATOR PC: " + simulator.pc);
 	};
 
 
@@ -116,7 +115,6 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 	};
 
     $scope.step = function(){
-    	console.log("Clock " + $scope.clock.toString() + " begin.");
 		simulator.hazard_signals = hazard_unit.get_signals();
 		$scope.hazard_signals = simulator.hazard_signals;
     	simulator.wb();

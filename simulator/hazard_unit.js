@@ -59,10 +59,6 @@ var hazard_unit = {
 		rd_2 = simulator.df_ds_buffer.reg_dst; // ds_tc_reg_dst
 		rd_3 = simulator.ds_tc_buffer.reg_dst; 
 		rf_ex_rd = (simulator.rf_ex_buffer.reg_dst_ctrl) ? simulator.rf_ex_buffer.addrI_dst : simulator.rf_ex_buffer.addrR_dst;
-		console.log("From Stall: ");
-		console.log("rs: "+rs+" rt: "+rt);
-		console.log("RD_1: "+rd_1+" RD_2: "+rd_2+" RD_3: "+rd_3);
-		console.log("RF/EX: "+rf_ex_rd);
 
 		//forwarding(d)
 		if((rs == simulator.rf_ex_buffer.reg_dst) && simulator.rf_ex_buffer.regwrite_en_ctrl)
