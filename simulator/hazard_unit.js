@@ -53,6 +53,8 @@ var hazard_unit = {
 
 		rs = (simulator.is_rf_buffer.instr >> 21) & 0x1F;
 		rt = (simulator.is_rf_buffer.instr >> 16) & 0x1F;
+		is_sw = ((simulator.is_rf_buffer.instr >> 26) & 0x3F) == 0x2B;
+
 		rd_1 = simulator.ex_df_buffer.reg_dst; // df_ds_reg_dst
 		rd_2 = simulator.df_ds_buffer.reg_dst; // ds_tc_reg_dst
 		rd_3 = simulator.ds_tc_buffer.reg_dst; 
@@ -93,13 +95,13 @@ var hazard_unit = {
 		// stalling
 		signals.stall = signals.flush = 0;
 
-		if(simulator.ex_df_buffer.memtoreg_ctrl && (rd_1 == rt || rd_1 == rs)){
+		if(simulator.ex_df_buffer.memtoreg_ctrl && ((rd_1 == rt && !is_sw) || rd_1 == rs)){
     		signals.stall = 1;
     		signals.flush = 1;
 		}
 
 
-		if(simulator.rf_ex_buffer.memtoreg_ctrl && (rf_ex_rd == rt || rf_ex_rd == rs)){
+		if(simulator.rf_ex_buffer.memtoreg_ctrl && ((rf_ex_rd == rt && !is_sw) || rf_ex_rd == rs)){
     		signals.stall = 2;
     		signals.flush = 1;
 		}

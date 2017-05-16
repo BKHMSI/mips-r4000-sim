@@ -24,6 +24,11 @@ app.config(function($routeProvider) {
             controller  : 'CPUController'
         })
 
+        .when('/btb', {
+            templateUrl : 'views/btb.html',
+            controller  : 'CPUController'
+        })
+
         .when('/convertor', {
             templateUrl : 'views/mips.html',
             controller  : 'CPUController'

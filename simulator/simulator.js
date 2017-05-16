@@ -4,6 +4,7 @@ var simulator = {
     i_cache:  new Uint32Array(256),
 	code_cache: new Array(256),
     reg_file: new Uint32Array(32),
+	stack: new Array(4),
     if_is_buffer: new buffer(),
     is_rf_buffer: new buffer(),
     rf_ex_buffer: new buffer(),
@@ -99,7 +100,7 @@ var simulator = {
     	}
 		
 		alu_input_tmp_2 = (this.hazard_signals.forward_g) ? this.tc_wb_buffer.data_from_mem : alu_input_tmp;
-		
+
 		alu_input_2 = (alusrc_ctrl) ? sign_imm : alu_input_tmp_2;
 		console.log("forward_a " + this.hazard_signals.forward_a);
 		console.log("forward_b " + this.hazard_signals.forward_b);
@@ -140,8 +141,8 @@ var simulator = {
     	var rt = (rf_instr >> 16) & 0x1F;
     	var rd = (rf_instr >> 11) & 0x1F;
     	var funct = rf_instr & 0x3F;
-		var br_1=0;
-		var br_2=0;
+		var br_1 = 0;
+		var br_2 = 0;
     	var control_signals = control_unit.get_signals(opcode, funct);
     	var ra1 = this.reg_file[rs];
     	var ra2 = this.reg_file[rt];
@@ -170,10 +171,14 @@ var simulator = {
 			case 2: br_2 = this.tc_wb_buffer.alu_out;break;
 			default: br_2 = ra2;
 		}
-		this.rf_ex_buffer.will_branch = br_1 == br_2 && this.rf_ex_buffer.branch ||
-										br_1 != br_2 && this.rf_ex_buffer.bne;
+
+		this.rf_ex_buffer.will_branch = (br_1 == br_2 && this.rf_ex_buffer.branch) ||
+										(br_1 != br_2 && this.rf_ex_buffer.bne);
+
 		this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + sign_imm * 4;
-		branch_predictor.update(this.is_rf_buffer.pc_plus4, this.rf_ex_buffer.branch_pc, this.rf_ex_buffer.will_branch);
+		if(this.rf_ex_buffer.will_branch)
+			branch_predictor.update(this.is_rf_buffer.pc_plus4, this.rf_ex_buffer.branch_pc, this.rf_ex_buffer.will_branch);
+
         this.rf_ex_buffer.sign_imm = sign_imm;
         this.rf_ex_buffer.reg_rd_1 = ra1;
         this.rf_ex_buffer.reg_rd_2 = ra2;
@@ -205,16 +210,19 @@ var simulator = {
 		this.if_is_buffer.pc = this.pc;
 		//TODO: Branch / Jump logic
 		var prediction = branch_predictor.predict(this.pc);
+		console.log("Prediction: ");
+		console.log(prediction);
 		if(this.rf_ex_buffer.jump_ctrl){
 			this.pc = this.rf_ex_buffer.pc_plus4 + this.rf_ex_buffer.sign_imm * 4;
 			flush_buffer(this.if_is_buffer);
 			flush_buffer(this.is_rf_buffer);
 		}
+
 		else if(prediction.branch_pc != undefined){
 			if(prediction.taken)
 				this.pc = prediction.branch_pc;
 			else this.pc = if_pc_plus4;
-			this.if_is_buffer.predicted_to_branch = prediction.taken;
+				this.if_is_buffer.predicted_to_branch = prediction.taken;
 		}
 		else if(this.rf_ex_buffer.will_branch && !this.rf_ex_buffer.predicted_to_branch){
 			this.pc = this.rf_ex_buffer.pc_plus4 + this.rf_ex_buffer.sign_imm * 4;

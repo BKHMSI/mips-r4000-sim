@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="col-lg-8 col-md-6">
+        <div id="btb" style="overflow:scroll; height: 600px;">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4 class="panel-title" style="display:inline-block">Branch Target Buffer</h4></div>
+                <div class="panel-body">
+                    <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">Branch PC</th>
+                                <th style="text-align:center">Predicted PC</th>
+                                <th style="text-align:center">Prediction State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;" class="source-code" ng-repeat="btb in branch_table">
+                                <td><div style="margin:auto;"><small>{{btb.pc}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{btb.branch_address}}</small></div></td>
+                                <td><div style="margin:auto;"><small>{{btb.state}}</small></div></td>
+                             </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

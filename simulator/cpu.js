@@ -18,6 +18,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.df_ds_buffer = simulator.df_ds_buffer;
     $scope.ds_tc_buffer = simulator.ds_tc_buffer;
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
+	$scope.branch_table = branch_predictor.branch_table;
 
 	var instr = [];
 	var editor;
@@ -34,7 +35,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     });
 
 	$scope.goTo = function(tab){
-		$("#editor_tab, #mem_tab, #cpu_tab, #mips_conv").removeClass("active");
+		$("#editor_tab, #mem_tab, #cpu_tab, #mips_conv, #btb").removeClass("active");
 		switch(tab){
 			case 0: 
 				$("#editor_tab").addClass("active");
@@ -52,6 +53,10 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 					$scope.error = "You need to assemble code first";
 				break;
 			case 3:
+				$("#btb").addClass("active");
+				window.location.href = "#btb";
+				break;
+			case 4:
 				$("#mips_conv").addClass("active");
 				window.location.href = "#convertor";
 				break;

@@ -29,7 +29,10 @@ var assembler = {
             // R Format
             console.log("R-Format");
             console.log(tokens)
-            binary = (0<<26)+(parseInt(tokens[3])<<21)+(parseInt(tokens[4])<<16)+(parseInt(tokens[2])<<11)+(0<<6)+this.map[tokens[1]];
+            if(tokens[1] == "sw" || tokens[1] == "lw")
+                binary = (this.map[tokens[1]] << 26)+(parseInt(tokens[4])<<21)+(parseInt(tokens[2])<<16)+parseInt(tokens[3]);
+            else  
+                binary = (0<<26)+(parseInt(tokens[3])<<21)+(parseInt(tokens[4])<<16)+(parseInt(tokens[2])<<11)+(0<<6)+this.map[tokens[1]];
         }else{
             // I Format
             console.log("I-Format");
@@ -43,9 +46,9 @@ var assembler = {
     tokenize: function(str){
 
         // add r1, r2, r3 or addi r1, r2, 5
-        var rgx_1 = "([a-z]{2,4})[rR$](3[01]|[12]?[0-9]),[rR$](3[01]|[12]?[0-9]),(?:(?:[rR$](3[01]|[12]?[0-9]))|([0-9]+))";
+        var rgx_1 = "([a-z]{3,4})[rR$](3[01]|[12]?[0-9]),[rR$](3[01]|[12]?[0-9]),(?:(?:[rR$](3[01]|[12]?[0-9]))|([0-9]+))";
         // lw r1, 0(r3)
-        var rgx_2 =  "([a-z]{2,4})[rR$]([12]?[0-9]|3[01]),[rR$]?([12]?[0-9]|3[01]|[0-9]+)\([rR$]([12]?[0-9]|3[01])\)";
+        var rgx_2 =  "([a-z]{2,4})[rR$]([12]?[0-9]|3[01]),[rR$]?([12]?[0-9]|3[01]|[0-9]+)[rR$]([12]?[0-9]|3[01])";
         // jal 500
         var rgx_3 =  "(j|jal)([0-9]+)";
 
@@ -60,6 +63,6 @@ var assembler = {
     },
 
     normalize: function(str){
-        return str.replace(/ /g,'').toLowerCase();
+        return str = str.replace(/[\(\) ]/g,'').toLowerCase();
     }
 }
