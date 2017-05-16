@@ -1,9 +1,9 @@
 var simulator = {
 
     pc : 0,
-    i_cache:  new Uint32Array(256),
+    i_cache:  new Int32Array(256),
 	code_cache: new Array(256),
-    reg_file: new Uint32Array(32),
+    reg_file: new Int32Array(32),
 	stack: new Array(4),
     if_is_buffer: new buffer(),
     is_rf_buffer: new buffer(),

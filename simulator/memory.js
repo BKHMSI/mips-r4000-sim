@@ -15,7 +15,8 @@ var memory = {
         var self = this;
         var value = 0;
         if (address < 0 || address >= self.data.length) {
-            throw "Memory access violation at " + address;
+            return 0;
+            //throw "Memory access violation at " + address;
         }
     
         self.last_access = address;
@@ -72,7 +73,8 @@ var memory = {
         var fourth = (value>>24) & 0xFF;
 
         if (address < 0 || address >= self.data.length) {
-            throw "Memory access violation at " + address;
+            return 0;
+            //throw "Memory access violation at " + address;
         }
 
         self.last_access = address;
