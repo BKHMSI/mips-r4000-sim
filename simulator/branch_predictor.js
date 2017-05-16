@@ -86,9 +86,7 @@ var branch_predictor = {
 			}
 		}
 		if(!this.is_valid(pc)){
-			console.log("PC " + pc + " ADDED TO BTB")
 			this.branch_table.push({"branch_address": pc, "predicted_pc": branch_address, "state":0})
-			console.log(this.branch_table)
 		}
 	},
 

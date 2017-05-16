@@ -78,7 +78,6 @@ var simulator = {
     	var alu_input_tmp;
 		var alu_input_tmp_1; 
 		var alu_input_tmp_2; 
-
     	switch(this.hazard_signals.forward_a){
     		case 4: alu_input_tmp_1 = this.df_ds_buffer.alu_out; break;
     		case 3: alu_input_tmp_1 = this.ds_tc_buffer.alu_out; break;
@@ -88,7 +87,6 @@ var simulator = {
     	}
 
 		alu_input_1 = (this.hazard_signals.forward_f) ? this.tc_wb_buffer.data_from_mem : alu_input_tmp_1;
-
     	switch(this.hazard_signals.forward_b){
 			case 4: alu_input_tmp = this.df_ds_buffer.alu_out; break;
     		case 3: alu_input_tmp = this.ds_tc_buffer.alu_out; break;
@@ -114,7 +112,6 @@ var simulator = {
             case 8: alu_out = (alu_input_1 < alu_input_2) ? 1 : 0; break;
         }
         var z_flag = alu_out == 0;
-        this.ex_df_buffer.reg_dst = (this.rf_ex_buffer.reg_dst_ctrl) ? this.rf_ex_buffer.addrI_dst : this.rf_ex_buffer.addrR_dst;
         this.ex_df_buffer.pcbranch = this.rf_ex_buffer.pcplus4 + this.rf_ex_buffer.sign_imm * 4;
         this.ex_df_buffer.alu_out = alu_out;
     },
@@ -152,7 +149,6 @@ var simulator = {
         	var signal_value = control_signals[control_signal];
         	this.rf_ex_buffer[control_signal] = signal_value;
         }
-
 		switch(this.hazard_signals.forward_d){
 			case 5: br_1 = this.ex_df_buffer.alu_out;break;
 			case 4: br_1 = this.df_ds_buffer.alu_out;break;
@@ -171,7 +167,9 @@ var simulator = {
 
 		this.rf_ex_buffer.will_branch = (br_1 == br_2 && this.rf_ex_buffer.branch_ctrl) ||
 										(br_1 != br_2 && this.rf_ex_buffer.bne_ctrl);
-
+		if(this.rf_ex_buffer.bne_ctrl || this.rf_ex_buffer.branch_ctrl){
+			this.rf_ex_buffer.regwrite_en_ctrl = 0;
+		}
 		if(is_neg)
 			this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + -(~sign_imm+1) * 4;
 		else
@@ -186,6 +184,7 @@ var simulator = {
         this.rf_ex_buffer.addrI_dst = rt;
         this.rf_ex_buffer.addrR_dst = rd;
         this.rf_ex_buffer.rs = rs;
+        this.rf_ex_buffer.reg_dst = (this.rf_ex_buffer.reg_dst_ctrl) ? this.rf_ex_buffer.addrI_dst : this.rf_ex_buffer.addrR_dst;
     },
 
     is: function(){
@@ -237,10 +236,25 @@ var simulator = {
 			this.pc = if_pc_plus4;
 		}*/
 		var prediction = branch_predictor.predict(this.pc);
-		if(this.rf_ex_buffer.jump_ctrl){
-			this.pc = this.rf_ex_buffer.pc_plus4 + this.rf_ex_buffer.sign_imm * 4;
-			flush_buffer(this.if_is_buffer);
-			flush_buffer(this.is_rf_buffer);
+		if(this.rf_ex_buffer.will_branch && (this.rf_ex_buffer.branch_ctrl || this.rf_ex_buffer.bne_ctrl)){
+			if(!this.rf_ex_buffer.predicted_to_branch){
+				this.pc = this.rf_ex_buffer.pc_plus4 + this.rf_ex_buffer.sign_imm * 4;
+				flush_buffer(this.if_is_buffer);
+				flush_buffer(this.is_rf_buffer);
+			}
+			else{
+				this.pc = if_pc_plus4;
+			}
+		}
+		else if(!this.rf_ex_buffer.will_branch && (this.rf_ex_buffer.branch_ctrl || this.rf_ex_buffer.bne_ctrl)){
+			if(this.rf_ex_buffer.predicted_to_branch == true){
+				this.pc = this.rf_ex_buffer.pc_plus4;
+				flush_buffer(this.if_is_buffer);
+				flush_buffer(this.is_rf_buffer);
+			}
+			else{
+				this.pc = if_pc_plus4;
+			}
 		}
 		else if(prediction.branch_pc != undefined){
 			if(prediction.taken)
@@ -249,19 +263,10 @@ var simulator = {
 				this.pc = if_pc_plus4;
 			this.if_is_buffer.predicted_to_branch = prediction.taken;
 		}
-		else if(this.rf_ex_buffer.will_branch && (this.rf_ex_buffer.branch_ctrl || this.rf_ex_buffer.bne_ctrl)){
+		else if(this.rf_ex_buffer.jump_ctrl){
 			this.pc = this.rf_ex_buffer.pc_plus4 + this.rf_ex_buffer.sign_imm * 4;
-			if(!this.rf_ex_buffer.predicted_to_branch){
-				flush_buffer(this.if_is_buffer);
-				flush_buffer(this.is_rf_buffer);
-			}
-		}
-		else if(!this.rf_ex_buffer.will_branch && (this.rf_ex_buffer.branch_ctrl || this.rf_ex_buffer.bne_ctrl)){
-			this.pc = this.rf_ex_buffer.pc_plus4;
-			if(this.rf_ex_buffer.predicted_to_branch == true){
-				flush_buffer(this.if_is_buffer);
-				flush_buffer(this.is_rf_buffer);
-			}
+			flush_buffer(this.if_is_buffer);
+			flush_buffer(this.is_rf_buffer);
 		}
 		else {
 			this.pc = if_pc_plus4;
