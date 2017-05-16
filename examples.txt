@@ -8,6 +8,11 @@ sw r2, 4(r0)
 addi r1, r0, 5
 add r2, r1, r1
 
+// Forwarding 
+addi r1, r0, 4
+sw r1, 4(r0)
+lw r2, 0(r1)
+
 // LW-Stall Hazard
 addi r1, r0, 5
 sw r1, 0(r0)
@@ -20,3 +25,12 @@ sw r1, 0(r0)
 lw r2, 0(r0)
 addi r5, r0, 25
 add r1, r2, r0
+
+// Branching Example
+addi r0, r0, 5
+addi r1, r0, 5
+addi r2, r0, 5
+beq r1, r1, 2
+addi r3, r0, 5
+addi r3, r0, 10
+addi r3, r0, 15

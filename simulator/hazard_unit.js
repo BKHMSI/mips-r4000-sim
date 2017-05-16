@@ -4,16 +4,16 @@ var hazard_unit = {
 	get_signals : function(){
 		var signals = {forward_a:0,forward_b:0,forward_c:0,forward_d:0,forwarde:0,forward_g:0,stall:0,flush:0};
 		// forwarding(a)
-		if (simulator.rf_ex_buffer.rs == simulator.ex_df_buffer.reg_dst && simulator.ex_df_buffer.regwrite_en_ctrl){
+		if (simulator.rf_ex_buffer.rs == simulator.ex_df_buffer.reg_dst && simulator.ex_df_buffer.regwrite_en_ctrl && simulator.ex_df_buffer.reg_dst){
 			signals.forward_a = 4;
 		}
-		else if (simulator.rf_ex_buffer.rs == simulator.df_ds_buffer.reg_dst && simulator.df_ds_buffer.regwrite_en_ctrl){
+		else if (simulator.rf_ex_buffer.rs == simulator.df_ds_buffer.reg_dst && simulator.df_ds_buffer.regwrite_en_ctrl && simulator.df_ds_buffer.reg_dst){
 			signals.forward_a = 3;
 		}
-		else if (simulator.rf_ex_buffer.rs == simulator.ds_tc_buffer.reg_dst && simulator.ds_tc_buffer.regwrite_en_ctrl){
+		else if (simulator.rf_ex_buffer.rs == simulator.ds_tc_buffer.reg_dst && simulator.ds_tc_buffer.regwrite_en_ctrl && simulator.ds_tc_buffer.reg_dst ){
 			signals.forward_a = 2;
 		}
-		else if (simulator.rf_ex_buffer.rs == simulator.tc_wb_buffer.reg_dst && simulator.tc_wb_buffer.regwrite_en_ctrl){
+		else if (simulator.rf_ex_buffer.rs == simulator.tc_wb_buffer.reg_dst && simulator.tc_wb_buffer.regwrite_en_ctrl && simulator.tc_wb_buffer.reg_dst){
 			signals.forward_a = 1;
 		}
 		else{
@@ -21,16 +21,16 @@ var hazard_unit = {
 		}
 
 		// forwarding(b)
-		if (simulator.rf_ex_buffer.addrI_dst == simulator.ex_df_buffer.reg_dst && simulator.ex_df_buffer.regwrite_en_ctrl){
+		if (simulator.rf_ex_buffer.addrI_dst == simulator.ex_df_buffer.reg_dst && simulator.ex_df_buffer.regwrite_en_ctrl && simulator.ex_df_buffer.reg_dst){
 			signals.forward_b = 4;
 		}
-		else if (simulator.rf_ex_buffer.addrI_dst == simulator.df_ds_buffer.reg_dst && simulator.df_ds_buffer.regwrite_en_ctrl){
+		else if (simulator.rf_ex_buffer.addrI_dst == simulator.df_ds_buffer.reg_dst && simulator.df_ds_buffer.regwrite_en_ctrl &&  simulator.df_ds_buffer.reg_dst){
 			signals.forward_b = 3;
 		}
-		else if (simulator.rf_ex_buffer.addrI_dst == simulator.ds_tc_buffer.reg_dst && simulator.ds_tc_buffer.regwrite_en_ctrl){
+		else if (simulator.rf_ex_buffer.addrI_dst == simulator.ds_tc_buffer.reg_dst && simulator.ds_tc_buffer.regwrite_en_ctrl && simulator.ds_tc_buffer.reg_dst){
 			signals.forward_b = 2;
 		}
-		else if (simulator.rf_ex_buffer.addrI_dst == simulator.tc_wb_buffer.reg_dst && simulator.tc_wb_buffer.regwrite_en_ctrl){
+		else if (simulator.rf_ex_buffer.addrI_dst == simulator.tc_wb_buffer.reg_dst && simulator.tc_wb_buffer.regwrite_en_ctrl && simulator.tc_wb_buffer.reg_dst){
 			signals.forward_b = 1;
 		}
 		else{
