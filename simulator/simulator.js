@@ -177,7 +177,7 @@ var simulator = {
 		else
 			this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + sign_imm * 4;
 			
-		if(this.rf_ex_buffer.will_branch)
+		if(this.rf_ex_buffer.branch_ctrl || this.rf_ex_buffer.bne_ctrl)
 			branch_predictor.update(this.is_rf_buffer.pc_plus4, this.rf_ex_buffer.branch_pc, this.rf_ex_buffer.will_branch);
 
         this.rf_ex_buffer.sign_imm = sign_imm;
