@@ -131,6 +131,9 @@ var simulator = {
     	var rf_instr = this.is_rf_buffer.instr;
     	var opcode = (rf_instr >> 26) & 0x3F;
     	var sign_imm = (rf_instr << 16) >>> 16;
+		var is_neg = sign_imm >> 15;
+		if(is_neg)
+			sign_imm |= 0xFFFF0000;
     	var rs = (rf_instr >> 21) & 0x1F;
     	var rt = (rf_instr >> 16) & 0x1F;
     	var rd = (rf_instr >> 11) & 0x1F;
@@ -169,7 +172,11 @@ var simulator = {
 		this.rf_ex_buffer.will_branch = (br_1 == br_2 && this.rf_ex_buffer.branch_ctrl) ||
 										(br_1 != br_2 && this.rf_ex_buffer.bne_ctrl);
 
-		this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + sign_imm * 4;
+		if(is_neg)
+			this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + -(~sign_imm+1) * 4;
+		else
+			this.rf_ex_buffer.branch_pc = this.is_rf_buffer.pc_plus4 + sign_imm * 4;
+			
 		if(this.rf_ex_buffer.will_branch)
 			branch_predictor.update(this.is_rf_buffer.pc_plus4, this.rf_ex_buffer.branch_pc, this.rf_ex_buffer.will_branch);
 
