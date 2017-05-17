@@ -5,6 +5,7 @@ var simulator = {
 	code_cache: new Array(256),
     reg_file: new Int32Array(32),
 	stack: new Array(4),
+	inst_flow: new Array(256),
     if_is_buffer: new buffer(),
     is_rf_buffer: new buffer(),
     rf_ex_buffer: new buffer(),
@@ -200,7 +201,7 @@ var simulator = {
 		this.is_rf_buffer.code = code;
     },  
     
-    if: function(){
+    if: function(clock){
 		//Branch logic selects an instruction address and the instruction cache fetch begins
 		if(this.hazard_signals.stall)
 			return;

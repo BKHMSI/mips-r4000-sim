@@ -81,12 +81,11 @@ var assembler = {
         binary = [];
         if(tokens[1] == "ble"){
             var imm = parseInt(tokens[5]) & 0xFFFF;
-            binary.push((0<<26)+(7<<21)+(parseInt(tokens[3])<<16)+(parseInt(tokens[2])<<11)+(0<<6)+this.map["slt"]);
+            binary.push((0<<26)+(parseInt(tokens[2])<<21)+(parseInt(tokens[3])<<16)+(7<<11)+(0<<6)+this.map["slt"]);
             binary.push((this.map["beq"] << 26)+(7<<21)+(0<<16)+(imm));
         }
         return binary;
     },
-
 
     normalize: function(str){
         return str = str.replace(/[\(\) ]/g,'').toLowerCase();
