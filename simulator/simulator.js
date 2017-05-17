@@ -265,10 +265,10 @@ var simulator = {
 		}
 		else if(this.rf_ex_buffer.jump_ctrl){
 			if(this.rf_ex_buffer.jump_procedure)
-				procedure_stack.push(this.pc);
-			if(!this.rf_ex_buffer.buffer.return_procedure)
-				this.pc = this.rf_ex_buffer.pc_plus4 + this.rf_ex_buffer.sign_imm * 4;
-			else 
+				procedure_stack.push(this.pc-4);
+
+			this.pc = this.rf_ex_buffer.pc_plus4 + this.rf_ex_buffer.sign_imm * 4;
+			if(this.rf_ex_buffer.return_procedure)
 				this.pc = procedure_stack.pop();
 			flush_buffer(this.if_is_buffer);
 			flush_buffer(this.is_rf_buffer);
