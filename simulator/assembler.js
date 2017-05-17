@@ -12,7 +12,9 @@ var assembler = {
         "slt":  0x2a,
         "j":     0x2,
         "jal":   0x3,
-        "jr":    0x8
+        "jr":    0x8,
+        "jp":    0x9,
+        "jrp":   0xa
     },
 
     assemble: function(str){
@@ -56,7 +58,7 @@ var assembler = {
         // lw r1, 0(r3)
         var rgx_2 =  "([a-z]{2,4})[rR$]([12]?[0-9]|3[01]),[rR$]?([12]?[0-9]|3[01]|[0-9]+)[rR$]([12]?[0-9]|3[01])";
         // jal 500
-        var rgx_3 =  "(j|jal)([0-9]+)";
+        var rgx_3 =  "(j|jal|jr|jp|jrp)([0-9]+)";
 
         if(str.match(rgx_1))
             return new RegExp(rgx_1).exec(str);
