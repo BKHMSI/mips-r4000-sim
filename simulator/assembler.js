@@ -19,6 +19,7 @@ var assembler = {
         str = this.normalize(str);
         var tokens = this.tokenize(str);
         var binary = 0;
+        var code = [];
         console.log(tokens);
         if(tokens.length == 3){
             // J Format
@@ -37,11 +38,15 @@ var assembler = {
             // I Format
             console.log("I-Format");
             console.log(tokens);
-            var imm = parseInt(tokens[5]) & 0xFFFF;
-            binary = (this.map[tokens[1]] << 26)+(parseInt(tokens[3])<<21)+(parseInt(tokens[2])<<16)+(imm);
-            console.log(binary);
+            if(this.is_pseudo(tokens[1])){
+                return this.assemble_pseudo(tokens);
+            }else{
+                var imm = parseInt(tokens[5]) & 0xFFFF;
+                binary = (this.map[tokens[1]] << 26)+(parseInt(tokens[3])<<21)+(parseInt(tokens[2])<<16)+(imm);
+            }
         }
-        return binary;
+        code.push(binary);
+        return code;
     },
 
     tokenize: function(str){
@@ -62,6 +67,21 @@ var assembler = {
         else
             throw 400;
     },
+
+    is_pseudo: function(memonic){
+        return memonic == "ble";
+    },
+
+    assemble_pseudo: function(tokens){
+        binary = [];
+        if(tokens[1] == "ble"){
+            var imm = parseInt(tokens[5]) & 0xFFFF;
+            binary.push((0<<26)+(7<<21)+(parseInt(tokens[3])<<16)+(parseInt(tokens[2])<<11)+(0<<6)+this.map["slt"]);
+            binary.push((this.map["beq"] << 26)+(7<<21)+(0<<16)+(imm));
+        }
+        return binary;
+    },
+
 
     normalize: function(str){
         return str = str.replace(/[\(\) ]/g,'').toLowerCase();

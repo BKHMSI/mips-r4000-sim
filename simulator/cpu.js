@@ -92,18 +92,21 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 		code = editor.getValue().split('\n');
 		code_buffer.set_code(code);
 		var error = false;
-		var binary = 0;
+		console.log(code);
 		for(var i = 0; i<code.length; i++){
 			if(code[i].trim() != ""){
 				try{
-					binary = assembler.assemble(code[i]);
+					var binary = assembler.assemble(code[i]);
+					console.log("Binary");
+					console.log(binary);
+					for(var j = 0; j<binary.length; j++) instr.push(binary[j]);
 				}catch(err){
 					error=  true;
 					$scope.error = "Syntax Error in Line #: "+(i+1);
                  	if(!$scope.$$phase) $scope.$apply();
 					alert("Syntax Error in Line #: "+(i+1));
+					break;
 				}
-				if(!error) instr.push(binary);
 			}
 		}
 		if(!error){
