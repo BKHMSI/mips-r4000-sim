@@ -27,7 +27,10 @@ var assembler = {
             // J Format
             console.log("J-Format");
             console.log(tokens);
-            binary = (this.map[tokens[1]]<<26)+parseInt(tokens[2]);
+            if(tokens[0] == "jrp")
+                binary = (this.map[tokens[0]]<<26);
+            else 
+                binary = (this.map[tokens[1]]<<26)+parseInt(tokens[2]);
         }else if(tokens[5] == null){
             // R Format
             console.log("R-Format");
@@ -58,7 +61,7 @@ var assembler = {
         // lw r1, 0(r3)
         var rgx_2 =  "([a-z]{2,4})[rR$]([12]?[0-9]|3[01]),[rR$]?([12]?[0-9]|3[01]|[0-9]+)[rR$]([12]?[0-9]|3[01])";
         // jal 500
-        var rgx_3 =  "(j|jal|jr|jp|jrp)([0-9]+)";
+        var rgx_3 =  "(j|jal|jr|jp)(-?[0-9]+)|jrp";
 
         if(str.match(rgx_1))
             return new RegExp(rgx_1).exec(str);

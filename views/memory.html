@@ -1,16 +1,43 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 style="display:inline-block; padding-right:10px" class="panel-title">Memory</h4>
-        <p style="display:inline-block;">Size(bytes): </p>
-        <input style="display:inline-block; height:20px; width:100px" class="txtbox" step="1" ng-model="mem_disp_size" type="text"
-            placeholder="Display" />
-    </div>
-    <div class="panel-body source-code">
-        <div class="source-code">
-            <div class="memory-block" ng-repeat="m in memory.subset(0,mem_disp_size) track by $index">
-                <div>
-                    <small>{{ m | MemFilter}}</small>
+<div class="row">
+    <div class="col-lg-8 col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 style="display:inline-block; padding-right:10px" class="panel-title">Memory</h4>
+                <p style="display:inline-block;">Size(bytes): </p>
+                <input style="display:inline-block; height:20px; width:100px" class="txtbox" step="1" ng-model="mem_disp_size" type="text"
+                    placeholder="Display" />
+            </div>
+            <div class="panel-body source-code">
+                <div class="source-code">
+                    <div class="memory-block" ng-repeat="m in memory.subset(0,mem_disp_size) track by $index">
+                        <div>
+                            <small>{{ m | MemFilter}}</small>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-6" style="overflow:scroll; height:600px">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title" style="display:inline-block">Stack</h4>
+            </div>
+            <div class="panel-body">
+                <table style="color:black" class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">Location</th>
+                                <th style="text-align:center">Data</th>
+                            </tr>
+                        </thead>
+                     <tbody>
+                        <tr style="text-align:center;" class="source-code" ng-repeat="s in stack track by $index">
+                            <td><div style="margin:auto;"><small>{{ $index }}</small></div></td>
+                            <td><div style="margin:auto;"><small>{{ s }}</small></div></td>
+                        </tr>
+                     </tbody>
+                </table>
             </div>
         </div>
     </div>

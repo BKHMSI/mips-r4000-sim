@@ -79,6 +79,8 @@ var control_unit ={
 				control_signals.alu_func_ctrl = 0;
 				control_signals.bne_ctrl = 0;
 				control_signals.mem_write_en_ctrl = 0;
+				control_signals.jump_procedure = 0;
+				control_signals.return_procedure = 0;
 				break; 
 
 			case 0x3: // JAL
@@ -91,7 +93,38 @@ var control_unit ={
 				control_signals.alu_func_ctrl = 0;
 				control_signals.bne_ctrl = 0;
 				control_signals.mem_write_en_ctrl = 0;
+				control_signals.jump_procedure = 0;
+				control_signals.return_procedure = 0;
 				break; 
+
+			case 0x9: // JP
+				control_signals.memtoreg_ctrl = 0;
+				control_signals.alusrc_ctrl = 0;
+				control_signals.regwrite_en_ctrl = 1;
+				control_signals.jump_ctrl = 1;
+				control_signals.reg_dst_ctrl = 1;
+				control_signals.branch_ctrl = 0;
+				control_signals.alu_func_ctrl = 0;
+				control_signals.bne_ctrl = 0;
+				control_signals.mem_write_en_ctrl = 0;
+				control_signals.jump_procedure = 1;
+				control_signals.return_procedure = 0;
+				break; 
+
+			case 0xA: // JPR
+				control_signals.memtoreg_ctrl = 0;
+				control_signals.alusrc_ctrl = 0;
+				control_signals.regwrite_en_ctrl = 1;
+				control_signals.jump_ctrl = 1;
+				control_signals.reg_dst_ctrl = 1;
+				control_signals.branch_ctrl = 0;
+				control_signals.alu_func_ctrl = 0;
+				control_signals.bne_ctrl = 0;
+				control_signals.mem_write_en_ctrl = 0;
+				control_signals.jump_procedure = 0;
+				control_signals.return_procedure = 1;
+				break; 
+
 			case 0x8: // addi
 				control_signals.memtoreg_ctrl = 0;
 				control_signals.alusrc_ctrl = 1;

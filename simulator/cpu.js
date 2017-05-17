@@ -19,6 +19,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.ds_tc_buffer = simulator.ds_tc_buffer;
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
 	$scope.branch_table = branch_predictor.branch_table;
+	$scope.stack = procedure_stack.stack;
 
 	var instr = [];
 	var editor;
