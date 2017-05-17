@@ -12,7 +12,7 @@ var assembler = {
         "slt":  0x2a,
         "j":     0x2,
         "jal":   0x3,
-        "jr":    0x8,
+        "jr":    0x6, // wrong opcode
         "jp":    0x9,
         "jrp":   0xa
     },
@@ -27,7 +27,7 @@ var assembler = {
             // J Format
             console.log("J-Format");
             console.log(tokens);
-            if(tokens[0] == "jrp")
+            if(tokens[0] == "jrp" || tokens[0] == "jr")
                 binary = (this.map[tokens[0]]<<26);
             else 
                 binary = (this.map[tokens[1]]<<26)+parseInt(tokens[2]);
@@ -61,7 +61,7 @@ var assembler = {
         // lw r1, 0(r3)
         var rgx_2 =  "([a-z]{2,4})[rR$]([12]?[0-9]|3[01]),[rR$]?([12]?[0-9]|3[01]|[0-9]+)[rR$]([12]?[0-9]|3[01])";
         // jal 500
-        var rgx_3 =  "(j|jal|jr|jp)(-?[0-9]+)|jrp";
+        var rgx_3 =  "(j|jal|jp)(-?[0-9]+)|jrp|jr";
 
         if(str.match(rgx_1))
             return new RegExp(rgx_1).exec(str);

@@ -41,3 +41,11 @@ addi r2, r0, 1
 add r2, r2, r2
 addi r4, r4, 1
 bne r4, r1, -3
+
+// Jump Procedure
+addi r1, r0, 10
+jp 2
+addi r2, r0, 5
+addi r3, r0, 5
+addi r4, r0, 5
+jrp
