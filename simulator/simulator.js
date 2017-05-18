@@ -16,6 +16,7 @@ var simulator = {
 	tmp_buffer: new buffer(),
 	hazard_signals: {forward_a:0,forward_b:0,forward_c:0,stall:0,flush:0},
 	was_stall: false,
+
     set_instr: function(instr){
         for(var i = 0; i<instr.length; i++)
             this.i_cache[i] = instr[i];
@@ -201,7 +202,7 @@ var simulator = {
 		this.is_rf_buffer.code = code;
     },  
     
-    if: function(clock){
+    if: function(){
 		//Branch logic selects an instruction address and the instruction cache fetch begins
 		if(this.hazard_signals.stall)
 			return;

@@ -102,6 +102,8 @@ var memory = {
 
 code_buffer = {
     code: [],
+    pipeline: [],
+    clock: 0,
     is_assemble: false,
     set_code: function(instr){
         for(var i = 0; i<instr.length; i++)

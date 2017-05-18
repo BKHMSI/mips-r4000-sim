@@ -1,0 +1,21 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title" style="display:inline-block">Pipeline Diagram</h4>
+    </div>
+    <div class="panel-body">
+        <table style="color:black" class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th ng-repeat="time in getTime() track by $index" style="text-align:center">{{$index+1}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="text-align:center;" class="source-code" ng-repeat="p_arr in pipe track by $index | limitTo: 20">
+                        <td ng-repeat="p in p_arr track by $index">
+                            <div style="margin:auto;"><small>{{ p }}</small></div>
+                        </td>
+                    </tr>
+                </tbody>
+        </table>
+    </div>
+</div>

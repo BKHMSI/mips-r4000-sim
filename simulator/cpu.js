@@ -20,10 +20,14 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     $scope.tc_wb_buffer = simulator.tc_wb_buffer;
 	$scope.branch_table = branch_predictor.branch_table;
 	$scope.stack = procedure_stack.stack;
+	$scope.pipeline = [];
+	$scope.pipe = code_buffer.pipeline;
 
 	var instr = [];
 	var editor;
 	var code = [];
+	var clock = 0;
+	$scope.diag_clock = 0;
 
 	$scope.$on('$routeChangeSuccess', function() {
 		// Init Editor
@@ -36,7 +40,7 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     });
 
 	$scope.goTo = function(tab){
-		$("#editor_tab, #mem_tab, #cpu_tab, #mips_conv, #btb").removeClass("active");
+		$("#editor_tab, #mem_tab, #cpu_tab, #mips_conv, #btb, #diag").removeClass("active");
 		switch(tab){
 			case 0: 
 				$("#editor_tab").addClass("active");
@@ -60,6 +64,12 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 			case 4:
 				$("#mips_conv").addClass("active");
 				window.location.href = "#convertor";
+				break;
+			case 5:
+				$("#diag").addClass("active");
+				window.location.href = "#diagram";
+				$scope.pipe = code_buffer.pipeline;
+				$scope.diag_clock = code_buffer.clock;
 				break;
 		}
 	};
@@ -114,13 +124,21 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
 			simulator.set_code(code);
 			simulator.set_instr(instr);
 			code_buffer.is_assemble = true;
+			$scope.pipeline = new Array(code.length);
+			for(var i = 0; i<code.length; i++)
+				$scope.pipeline[i] = [];
 			$scope.goTo(2);	
 		}
+	};
+
+	$scope.getTime = function() {
+		return new Array(20);
 	};
 
     $scope.step = function(){
 		simulator.hazard_signals = hazard_unit.get_signals();
 		$scope.hazard_signals = simulator.hazard_signals;
+		var wb_pc = simulator.tc_wb_buffer.pc_plus4 - 4;
     	simulator.wb();
     	simulator.tc();
     	simulator.ds();
@@ -129,6 +147,34 @@ app.controller('CPUController', ['$scope', '$window', function($scope,$window) {
     	simulator.rf();
     	simulator.is();
     	simulator.if();
+
+		if(!$scope.pipeline.length){
+			$scope.pipeline = new Array(1000);
+			for(var i = 0; i<$scope.pipeline.length; i++)
+				$scope.pipeline[i] = [];
+			console.log($scope.pipeline)
+		}
+		
+		for(var i = 0; i < $scope.pipeline.length; i ++){
+			$scope.pipeline[i].push(" ");
+		}
+		if(simulator.if_is_buffer.pc != undefined)
+			$scope.pipeline[simulator.if_is_buffer.pc / 4][$scope.clock] = "if";
+		if(simulator.is_rf_buffer.pc_plus4 != undefined)
+			$scope.pipeline[simulator.is_rf_buffer.pc_plus4 / 4  - 1][$scope.clock] = "is";
+		if(simulator.rf_ex_buffer.pc_plus4 != undefined)
+			$scope.pipeline[simulator.rf_ex_buffer.pc_plus4 / 4 - 1][$scope.clock] = "rf";
+		if(simulator.ex_df_buffer.pc_plus4 != undefined)
+			$scope.pipeline[simulator.ex_df_buffer.pc_plus4 / 4 - 1][$scope.clock] = "ex";
+		if(simulator.df_ds_buffer.pc_plus4 != undefined)
+			$scope.pipeline[simulator.df_ds_buffer.pc_plus4 / 4 - 1][$scope.clock] = "df";
+		if(simulator.ds_tc_buffer.pc_plus4 != undefined)
+			$scope.pipeline[simulator.ds_tc_buffer.pc_plus4 / 4 - 1][$scope.clock] = "ds";
+		if(simulator.tc_wb_buffer.pc_plus4 != undefined)
+			$scope.pipeline[simulator.tc_wb_buffer.pc_plus4 / 4 - 1][$scope.clock] = "tc";
+		code_buffer.pipeline = $scope.pipeline;
+		code_buffer.clock = $scope.clock;
+
 		if(simulator.hazard_signals.stall)
     		simulator.hazard_signals.stall--;
     	$scope.clock ++;

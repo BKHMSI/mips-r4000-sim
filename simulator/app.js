@@ -33,6 +33,11 @@ app.config(function($routeProvider) {
             templateUrl : 'views/mips.html',
             controller  : 'CPUController'
         })
+
+        .when('/diagram', {
+            templateUrl : 'views/diagram.html',
+            controller  : 'CPUController'
+        })
 });
 
 angular.module('BinFilter', []).filter('BinFilter', function() {
